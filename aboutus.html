@@ -1,0 +1,1777 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quỳnh Như' space</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-bg: #121212;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-text: #f0f0f0;
+            --text-light: #e0e0e0;
+            --accent: #fff;
+            --accent-glow: rgba(255, 255, 255, 0.5);
+            --accent-secondary: #d4a373;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Nunito', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ===== PAGE LOADER ===== */
+#page-loader{
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at top,#0b1a4a,#050f2c 70%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  transition:opacity .8s ease, visibility .8s ease;
+}
+
+#page-loader.hide{
+  opacity:0;
+  visibility:hidden;
+}
+
+.loader-content{
+  text-align:center;
+  color:#fff;
+}
+
+.loader-content h2{
+  font-family:'Playfair Display',serif;
+  font-size:2.4rem;
+  color:#f8b229;
+  text-shadow:0 0 20px rgba(248,178,41,.8);
+  margin-bottom:20px;
+}
+
+.tree{
+  font-size:4rem;
+  animation:treeGlow 2s infinite alternate;
+  margin-bottom:10px;
+}
+
+@keyframes treeGlow{
+  from{filter:drop-shadow(0 0 10px #f8b229)}
+  to{filter:drop-shadow(0 0 30px #ffd56a)}
+}
+
+.progress-wrap{
+  width:260px;
+  height:10px;
+  background:rgba(255,255,255,.2);
+  border-radius:999px;
+  overflow:hidden;
+  margin:20px auto;
+}
+
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#f8b229,#ffd56a,#fff);
+  box-shadow:0 0 15px rgba(248,178,41,.9);
+  animation:loading 2.5s infinite;
+}
+
+@keyframes loading{
+  0%{width:0%}
+  60%{width:100%}
+  100%{width:100%}
+}
+
+.loader-content p{
+  opacity:.8;
+  font-style:italic;
+}
+
+.nav-btn{
+  position:fixed;
+  top:20px;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.4rem;
+  cursor:pointer;
+  z-index:999;
+  transition:.35s ease;
+  box-shadow:0 8px 25px rgba(0,0,0,.4);
+}
+
+.nav-btn:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 20px rgba(248,178,41,.8);
+}
+
+.nav-left{left:20px}
+.nav-right{right:20px}
+
+
+        /* Musical Notes Background */
+        #star-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: all;
+            overflow: hidden;
+            background: radial-gradient(circle at bottom, #1a1a1a 0%, #000 100%);
+        }
+
+        .music-note {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: floatNote var(--duration) ease-in-out infinite;
+            animation-delay: var(--delay);
+            user-select: none;
+        }
+
+        .music-note:hover {
+            transform: scale(1.5);
+            color: rgba(255, 255, 255, 1);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+
+        .music-note.bloom {
+            animation: bloomEffect 0.6s ease-out forwards;
+        }
+
+        @keyframes floatNote {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(-5deg); }
+            50% { transform: translateY(-25px) rotate(0deg); }
+            75% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        @keyframes bloomEffect {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(2.5); opacity: 0.8; }
+            100% { transform: scale(3.5); opacity: 0; }
+        }
+
+        section:not(.hero) {
+            position: relative;
+            z-index: auto;
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Navigation */
+        .music-nav {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            z-index: 50;
+            padding: 10px;
+        }
+
+        .music-nav .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .note-link {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .label {
+            color: #bbb;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 1;
+            transform: none;
+            transition: all 0.3s ease;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .note-link:hover .label,
+        .note-link.active .label {
+            color: var(--accent);
+            text-shadow: 0 0 8px var(--accent);
+        }
+
+        .note-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #fff;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .note-link:hover .note-icon,
+        .note-link.active .note-icon {
+            transform: scale(1.2);
+            background: var(--accent);
+            color: #000;
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        /* Music Player */
+        .music-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+            border: 2px solid #333;
+            animation: pulse-music 2s infinite;
+        }
+
+        @keyframes pulse-music {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        .music-control svg {
+            width: 24px;
+            height: 24px;
+            fill: #000;
+        }
+
+        .music-control.playing svg {
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+        }
+
+        #particleCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 0px #555;
+            font-family: 'Great Vibes', cursive;
+            animation: floatText 3s ease-in-out infinite;
+        }
+
+        @keyframes floatText {
+            50% { transform: translateY(-10px); }
+        }
+
+        .greeting-text {
+            font-family: monospace;
+            color: var(--accent-secondary);
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .greeting-text::before {
+            content: '♫';
+            margin-right: 5px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(5px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .info-item:hover {
+            transform: translateY(-8px) scale(1.02);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .info-item label {
+            font-size: 0.85rem;
+            color: var(--accent-secondary);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-item span {
+            font-size: 1.1rem;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            aspect-ratio: 3/4;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 15px 15px 0px rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: gentleFloat 6s ease-in-out infinite;
+            transition: transform 0.5s ease;
+        }
+
+        .image-placeholder:hover {
+            transform: translateY(-10px);
+            box-shadow: 20px 20px 0px rgba(255, 255, 255, 0.15);
+        }
+
+        .image-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes gentleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .tagline {
+            font-style: italic;
+            font-size: 1.1rem;
+            color: #ccc;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), transparent);
+            border-radius: 5px;
+            border-left: 3px solid var(--accent);
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 3rem;
+            text-align: center;
+            font-family: 'Great Vibes', cursive;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Career Section */
+        .career-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            color: var(--card-text);
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            z-index: 10;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .card h3 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+
+        .card p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+            color: #aaa;
+        }
+
+        .achievements-list {
+            list-style: none;
+        }
+
+        .achievements-list li {
+            padding: 1rem;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #ccc;
+        }
+
+        .achievements-list li:hover {
+            transform: translateX(10px) scale(1.02);
+            background: var(--accent);
+            color: #000;
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .achievements-list li::before {
+            content: '✓';
+            font-size: 1.2rem;
+        }
+
+        .cloud-popup {
+            position: absolute;
+            left: 105%;
+            top: 50%;
+            transform: translateY(-50%) scale(0.8);
+            width: 300px;
+            height: 200px;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border: 1px solid #444;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            background: #111;
+        }
+
+        .achievements-list li:hover .cloud-popup {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(-50%) scale(1);
+            z-index: 9999;
+        }
+
+        .achievements-list li:hover {
+            z-index: 99999;
+            position: relative;
+        }
+
+        .cloud-popup img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Free Time Section */
+        .freetime-container {
+            display: flex;
+            width: 100%;
+            height: 450px;
+            gap: 1rem;
+            padding: 0 1rem;
+        }
+
+        .ft-panel {
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            flex: 0.5;
+            position: relative;
+            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .ft-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), rgba(0,0,0,0.9));
+            opacity: 0.8;
+            transition: opacity 0.5s;
+        }
+
+        .ft-panel:hover {
+            flex: 3;
+            border-color: var(--accent);
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.2);
+        }
+
+        .ft-panel:hover::before {
+            opacity: 0.2;
+        }
+
+        .ft-icon {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #fff;
+            z-index: 2;
+        }
+
+        .ft-panel h3 {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            z-index: 2;
+            text-shadow: 0 2px 4px #000;
+        }
+
+        .ft-content {
+            position: absolute;
+            bottom: 60px;
+            left: 20px;
+            right: 20px;
+            opacity: 0;
+            transition: all 0.5s ease;
+            z-index: 2;
+            font-weight: 500;
+            color: #ccc;
+            transform: translateY(20px);
+        }
+
+        .ft-panel:hover .ft-content {
+            opacity: 1;
+            bottom: 80px;
+            transform: translateY(0);
+        }
+
+        /* Personality Section */
+        .personality-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            perspective: 1000px;
+        }
+
+        .per-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 2rem;
+            border-radius: 5px;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        .per-card:hover {
+            transform: translateY(-10px) rotateY(5deg);
+            background: rgba(255,255,255,0.08);
+            border-color: var(--accent);
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.1);
+        }
+
+        .per-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            filter: grayscale(1);
+            transition: 0.3s;
+        }
+
+        .per-card:hover .per-icon {
+            filter: grayscale(0);
+        }
+
+        .per-title {
+            color: var(--accent);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .per-desc {
+            font-size: 1rem;
+            color: #999;
+        }
+
+        /* Becoming Section */
+        .becoming-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .goal-card {
+            background: #181818;
+            border-radius: 10px;
+            padding: 2rem;
+            display: flex;
+            gap: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .goal-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--accent);
+            box-shadow: 0 15px 45px rgba(255, 255, 255, 0.15);
+        }
+
+        .goal-icon {
+            font-size: 2.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+            color: var(--accent-secondary);
+        }
+
+        .goal-content h3 {
+            font-size: 1.3rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .goal-content p {
+            font-size: 0.95rem;
+            color: #888;
+            margin: 0;
+        }
+
+        /* Moments Section */
+        .moments-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .moment-card {
+            background: #fff;
+            border-radius: 2px;
+            overflow: hidden;
+            padding: 10px;
+            padding-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transform: rotate(-1deg);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .moment-card:nth-child(even) {
+            transform: rotate(1deg);
+        }
+
+        .moment-card:hover {
+            transform: rotate(0) scale(1.05) translateY(-10px);
+            z-index: 10;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+        }
+
+        .moment-card .image-box {
+            width: 100%;
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            background: #333;
+            position: relative;
+        }
+
+        .moment-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .moment-card:hover img {
+            transform: scale(1.1);
+        }
+
+        .moment-card .text {
+            padding: 1rem 0.5rem 0;
+            color: #000;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        /* Gallery Section */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 200px;
+            gap: 1.5rem;
+        }
+
+        .bento-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bento-item:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+            box-shadow: 0 10px 40px rgba(255, 255, 255, 0.2);
+        }
+
+        .bento-icon {
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .bento-label {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 10px;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            text-align: center;
+        }
+
+        .span-2-col {
+            grid-column: span 2;
+        }
+
+        .span-2-row {
+            grid-row: span 2;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            text-align: center;
+            color: white;
+            max-width: 80%;
+            transform: scale(0.8);
+            transition: 0.3s;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 8rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            color: white;
+            font-size: 3rem;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        .cosmos-footer {
+            padding: 4rem 2rem 2rem;
+            background: linear-gradient(to top, #111, transparent);
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 4rem;
+            position: relative;
+        }
+
+        .neon-signature {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .rocket-launcher {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            font-size: 3rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+            z-index: 100;
+        }
+
+        .rocket-launcher:hover {
+            transform: translateY(-10px);
+        }
+
+        /* Edit Mode Styles */
+        body.edit-mode .editable-text {
+            outline: 2px dashed #fff;
+            background: rgba(255, 255, 255, 0.2);
+            min-width: 40px;
+            cursor: text;
+            padding: 2px 5px;
+            border-radius: 4px;
+        }
+
+        body.edit-mode .img-container {
+            position: relative;
+            outline: 3px dashed var(--accent-secondary);
+        }
+
+        .edit-upload-btn {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            z-index: 999;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+
+        body.edit-mode .img-container:hover .edit-upload-btn,
+        body.edit-mode .img-container .edit-upload-btn {
+            display: block;
+        }
+
+        .admin-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 9999;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #333;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+            border: 2px solid white;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .admin-toggle-btn:hover {
+            transform: scale(1.1);
+            background: #555;
+        }
+
+        .admin-toggle-btn.active {
+            background: #fff;
+            color: #000;
+            transform: rotate(45deg);
+        }
+
+        .list-controls {
+            display: none;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        body.edit-mode .list-controls {
+            display: flex;
+        }
+
+        .btn-mini {
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+            transition: 0.2s;
+        }
+
+        .btn-green {
+            background: #fff;
+        }
+
+        .btn-green:hover {
+            background: #ddd;
+        }
+
+        body.edit-mode .delete-btn-wrapper {
+            position: relative;
+        }
+
+        .delete-item-btn {
+            display: none;
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            z-index: 100;
+            background: #ff4757;
+            color: white;
+            border: 2px solid white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        body.edit-mode .delete-item-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .music-nav {
+                display: none;
+            }
+
+            .hero-content,
+            .career-grid,
+            .moments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .freetime-container {
+                height: auto;
+                flex-direction: column;
+            }
+
+            .ft-panel {
+                height: 200px;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+                grid-auto-rows: 150px;
+            }
+
+            .span-2-col,
+            .span-2-row {
+                grid-column: span 1;
+                grid-row: span 1;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+        }
+/* lớp lật trang */
+#page-flip{
+  position:fixed;
+  inset:0;
+  background:#0b1a4a;
+  transform-origin:left center;
+  transform:rotateY(-100deg);
+  transition:transform .65s cubic-bezier(.6,.01,.15,1);
+  z-index:999;
+  perspective:2000px;
+  box-shadow:-30px 0 60px rgba(0,0,0,.6);
+}
+
+/* active */
+#page-flip.active{
+  transform:rotateY(0deg);
+}
+
+/* tuyết */
+#snow-canvas{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:998;
+}
+
+
+    
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation Buttons -->
+<div class="nav-btn nav-left" onclick="goTree()">
+  ⬅
+</div>
+
+<div class="nav-btn nav-right" onclick="goKhoa()">
+  ➡
+</div>
+
+
+
+    <!-- Christmas Loader -->
+    <div id="page-loader">
+    <div class="loader-content">
+        <div class="tree">🎄</div>
+        <h2>Loading...</h2>
+
+        <div class="progress-wrap">
+        <div class="progress-bar"></div>
+        </div>
+
+        <p>Vạn vật đến từ em ...</p>
+    </div>
+    </div>
+
+
+    <div id="star-container"></div>
+
+    <button id="toggleEditBtn" class="admin-toggle-btn" title="Chế độ chỉnh sửa">✎</button>
+    <input type="file" id="globalImageUpload" accept="image/*" style="display:none">
+
+    <nav class="music-nav">
+        <ul class="nav-links">
+            <li><a href="#home" class="note-link"><span class="label">Intro</span><div class="note-icon">♩</div></a></li>
+            <li><a href="#career" class="note-link"><span class="label">Career</span><div class="note-icon">♪</div></a></li>
+            <li><a href="#freetime" class="note-link"><span class="label">Free Time</span><div class="note-icon">♫</div></a></li>
+            <li><a href="#personality" class="note-link"><span class="label">Personality</span><div class="note-icon">♬</div></a></li>
+            <li><a href="#becoming" class="note-link"><span class="label">Becoming</span><div class="note-icon">♭</div></a></li>
+            <li><a href="#moments" class="note-link"><span class="label">Moments</span><div class="note-icon">♮</div></a></li>
+            <li><a href="#gallery" class="note-link"><span class="label">Gallery</span><div class="note-icon">♯</div></a></li>
+        </ul>
+    </nav>
+
+    <div class="music-control" id="musicControl">
+        <svg viewBox="0 0 24 24" id="playIcon"><path d="M8 5v14l11-7z"/></svg>
+        <svg viewBox="0 0 24 24" id="pauseIcon" style="display:none;"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+    </div>
+
+    <audio id="bgMusic" loop>
+        <source src="Không Thời Gian - Dương Domic (Official Visualizer).mp4" type="audio/mp4">
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+    </audio>
+
+    <section class="hero" id="home">
+        <canvas id="particleCanvas"></canvas>
+        <div class="hero-content">
+            <div class="hero-text">
+                <div id="greeting" class="greeting-text"></div>
+                <h1 id="heroName" class="editable-text" data-section="hero" data-field="name">Khuất Như Khoa</h1>
+                <div id="heroTagline" class="tagline editable-text" data-section="hero" data-field="tagline">
+                    Chào cậu, cảm ơn cậu đã dành thời gian lướt qua đây...
+                </div>
+                <div class="info-grid" id="heroInfoGrid"></div>
+            </div>
+            <div class="hero-image">
+                <div class="image-placeholder img-container">
+                    <img id="heroImage" src="hoa.jpg" alt="Hero">
+                    <button class="edit-upload-btn" onclick="triggerUpload('hero', 'image')">📷 Đổi ảnh</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="career">
+        <h2 class="section-title">Career Path</h2>
+        <div class="career-grid">
+            <div class="card">
+                <h3 class="editable-text" data-section="career" data-field="introTitle">Học Tập & Công Việc</h3>
+                <p class="editable-text" style="white-space: pre-line" data-section="career" data-field="introText">
+                    Content...
+                </p>
+                <hr style="border-color:rgba(255,255,255,0.1); border-style:dashed; margin: 20px 0;">
+                <h3 class="editable-text" data-section="career" data-field="currentTitle">Hiện tại</h3>
+                <p class="editable-text" style="white-space: pre-line" data-section="career" data-field="currentText">
+                    Content...
+                </p>
+            </div>
+            <div class="card">
+                <h3>Thành tựu nhỏ 🎁</h3>
+                <ul class="achievements-list" id="achievementsList"></ul>
+                <div class="list-controls">
+                    <button class="btn-mini btn-green" onclick="addItem('achievements')">+ Thêm mục</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="freetime">
+        <h2 class="section-title">Free Time</h2>
+        <div class="freetime-container" id="freetimeContainer"></div>
+        <div class="list-controls">
+            <button class="btn-mini btn-green" onclick="addItem('freetime')">+ Thêm hoạt động</button>
+        </div>
+    </section>
+
+    <section id="personality">
+        <h2 class="section-title">Personality</h2>
+        <div class="personality-wrapper" id="personalityContainer"></div>
+        <div class="list-controls">
+            <button class="btn-mini btn-green" onclick="addItem('personality')">+ Thêm tính cách</button>
+        </div>
+    </section>
+
+    <section id="becoming">
+        <h2 class="section-title">Becoming</h2>
+        <div class="becoming-container" id="becomingContainer"></div>
+        <div class="list-controls">
+            <button class="btn-mini btn-green" onclick="addItem('becoming')">+ Thêm mục tiêu</button>
+        </div>
+    </section>
+
+    <section id="moments">
+        <h2 class="section-title">Moments</h2>
+        <div class="moments-grid" id="momentsContainer"></div>
+        <div class="list-controls">
+            <button class="btn-mini btn-green" onclick="addItem('moments')">+ Thêm ảnh</button>
+        </div>
+    </section>
+
+    <section id="gallery">
+        <h2 class="section-title">Gallery</h2>
+        <div class="bento-grid" id="galleryContainer"></div>
+        <div class="list-controls">
+            <button class="btn-mini btn-green" onclick="addItem('gallery')">+ Thêm Gallery</button>
+        </div>
+    </section>
+
+    <div class="modal" id="imageModal">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon"></div>
+            <h3 class="modal-text" id="modalText"></h3>
+        </div>
+    </div>
+
+    <footer class="cosmos-footer">
+        <div class="footer-content">
+            <div class="neon-signature">Như Khoa & Quỳnh Như </div>
+            <p class="footer-msg">Made with all my love.</p>
+            <div class="copyright">© 2025 KNK Universe.</div>
+        </div>
+        <div class="rocket-launcher" id="rocketBtn">🚀</div>
+    </footer>
+
+    <script>
+
+        
+        // Hiện loader khi load trang
+window.addEventListener('load', () => {
+  // Giả lập thời gian load data (Cloudinary / localStorage)
+  setTimeout(() => {
+    document.getElementById('page-loader').classList.add('hide');
+  }, 1800); // chỉnh nhanh/chậm tuỳ ý
+});
+
+window.addEventListener('load', () => {
+    if (sessionStorage.getItem('userInteracted') === 'true') {
+        const audio = document.getElementById('bgMusic');
+        audio.volume = 0.6;
+        audio.play().catch(() => {});
+    }
+});
+
+
+        let GLOBAL_CONFIG = {
+            cloudinary: {
+                cloudName: 'dios7cyto',
+                uploadPreset: 'QN221205'
+            },
+            firebase: {
+                apiKey: "BF4FeUHM6SvafkQHyQUaUdPTmUcbK1dAfbZLwGT3ic2i91ittOHzFNo5I5ThR",
+                authDomain: "qn-source-storage.firebaseapp.com",
+                databaseURL: "https://qn-source-storage-default-rtdb.firebaseio.com/",
+                projectId: "qn-source-storage",
+                storageBucket: "",
+                messagingSenderId: "",
+                appId: ""
+            }
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(GLOBAL_CONFIG.firebase);
+        }
+        const db = firebase.database();
+
+        let appData = {};
+        let isEditMode = false;
+        let activeUploadCallback = null;
+
+        const defaultData = {
+            hero: {
+                name: "Khuất Như Khoa",
+                tagline: "Chào cậu, cảm ơn cậu đã dành thời gian lướt qua đây. Đây sẽ là vài nét về cuộc sống, tam quan, sở thích cũng như 1 số khoảnh khắc của tớ!",
+                image: "hoa.jpg",
+                info: [
+                    { label: "Ngày sinh", value: "06/12/2003" },
+                    { label: "Cung", value: "Nhân Mã" },
+                    { label: "MBTI", value: "INTJ" },
+                    { label: "Nơi ở", value: "Hà Nội" },
+                    { label: "Social", value: "Như Khoa" }
+                ]
+            },
+            career: {
+                introTitle: "Học Tập & Công Việc",
+                introText: "Đã từng: Làm phụ bếp...\nHọc chuyên ngành Software Engineering – Đại học FPT",
+                currentTitle: "Hiện tại",
+                currentText: "Developer – FPT Software\nĐịnh hướng: Hybrid: Senior Developer + Korean Bridge SE.",
+                achievements: [
+                    { text: "TOPIK 4", image: "topik.png" },
+                    { text: "TOEIC 925", image: "toeic.png" },
+                    { text: "GPA 8.6/10", image: "bangdh.jpg" }
+                ]
+            },
+            freetime: [
+                { icon: "🌐", title: "Ngoại Ngữ", desc: "Học Tiếng Hàn & Tiếng Anh.", bg: "nn.jpg" },
+                { icon: "💻", title: "Coding", desc: "Làm project, tìm hiểu công nghệ mới.", bg: "code.jpg" },
+                { icon: "🎹", title: "Du lịch", desc: "Thích đi du lịch.", bg: "dulich.jpg" }
+            ],
+            personality: [
+                { icon: "🛡️", title: "Nội tâm", desc: "Trầm tính. Thích sự yên ổn." },
+                { icon: "🧭", title: "Tam quan", desc: "Sống có chính kiến." }
+            ],
+            becoming: [
+                { icon: "🍳", title: "Gia đình", desc: "Người đàn ông của gia đình." },
+                { icon: "💼", title: "Sự nghiệp", desc: "Biết đủ và cần đủ." }
+            ],
+            moments: [
+                { text: "Bạn bè", image: "bb.jpg" },
+                { text: "Thiên nhiên", image: "hb.jpg" }
+            ],
+            gallery: [
+                { icon: "💼", label: "Công việc", modalText: "Công việc", span: "2-2" },
+                { icon: "🏡", label: "Đời sống", modalText: "Đời sống", span: "" },
+                { icon: "📷", label: "Kỷ niệm", modalText: "Kỷ niệm", span: "" }
+            ]
+        };
+
+        function initApp() {
+            db.ref('/').once('value').then(snapshot => {
+                const data = snapshot.val();
+                if (data) appData = data;
+                else {
+                    appData = JSON.parse(JSON.stringify(defaultData));
+                    db.ref('/').set(appData);
+                }
+                renderAll();
+            }).catch(e => {
+                console.error(e);
+                appData = defaultData;
+                renderAll();
+            });
+        }
+
+        function renderAll() {
+            renderHero();
+            renderCareer();
+            renderFreetime();
+            renderPersonality();
+            renderBecoming();
+            renderMoments();
+            renderGallery();
+        }
+
+        function saveData() {
+            db.ref('/').set(appData);
+        }
+
+        function renderHero() {
+            document.getElementById('heroName').innerText = appData.hero.name;
+            document.getElementById('heroTagline').innerText = appData.hero.tagline;
+            document.getElementById('heroImage').src = appData.hero.image;
+
+            const infoGrid = document.getElementById('heroInfoGrid');
+            infoGrid.innerHTML = appData.hero.info.map((item, idx) => `
+                <div class="info-item">
+                    <label class="editable-text" onblur="updateList('hero', 'info', ${idx}, 'label', this.innerText)" contenteditable="${isEditMode}">${item.label}</label>
+                    <span class="editable-text" onblur="updateList('hero', 'info', ${idx}, 'value', this.innerText)" contenteditable="${isEditMode}">${item.value}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderCareer() {
+            document.querySelectorAll('[data-section="career"]').forEach(el => el.innerText = appData.career[el.dataset.field]);
+            const list = document.getElementById('achievementsList');
+            list.innerHTML = appData.career.achievements.map((item, idx) => `
+                <li class="delete-btn-wrapper">
+                    <span class="editable-text" contenteditable="${isEditMode}" onblur="updateList('career', 'achievements', ${idx}, 'text', this.innerText)">${item.text}</span>
+                    <button class="delete-item-btn" onclick="deleteItem('achievements', ${idx})">x</button>
+                    <div class="cloud-popup img-container" style="display:${isEditMode ? 'block' : 'none'}; opacity:${isEditMode?1:0}; visibility:${isEditMode?'visible':'hidden'}; position:relative; left:0; top:10px; transform:none;">
+                        <img src="${item.image || ''}" style="width:100%; height:100%; object-fit:cover;">
+                        <button class="edit-upload-btn" onclick="triggerUpload('achievements', ${idx})">📷</button>
+                    </div>
+                    <div class="cloud-popup" style="${isEditMode ? 'display:none' : ''}">
+                        <img src="${item.image || ''}">
+                    </div>
+                </li>
+            `).join('');
+        }
+
+        function renderFreetime() {
+            document.getElementById('freetimeContainer').innerHTML = appData.freetime.map((item, idx) => `
+                <div class="ft-panel delete-btn-wrapper img-container" style="background-image: url('${item.bg}');">
+                    <button class="delete-item-btn" onclick="deleteItem('freetime', ${idx})">x</button>
+                    <button class="edit-upload-btn" style="top:50%; left:50%; transform:translate(-50%, -50%);" onclick="triggerUpload('freetime', ${idx})">📷 Đổi BG</button>
+                    <div class="ft-icon editable-text" contenteditable="${isEditMode}" onblur="updateList('freetime', null, ${idx}, 'icon', this.innerText)">${item.icon}</div>
+                    <h3 class="editable-text" contenteditable="${isEditMode}" onblur="updateList('freetime', null, ${idx}, 'title', this.innerText)">${item.title}</h3>
+                    <div class="ft-content">
+                        <p class="editable-text" contenteditable="${isEditMode}" onblur="updateList('freetime', null, ${idx}, 'desc', this.innerText)">${item.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderPersonality() {
+            document.getElementById('personalityContainer').innerHTML = appData.personality.map((item, idx) => `
+                <div class="per-card delete-btn-wrapper">
+                    <button class="delete-item-btn" onclick="deleteItem('personality', ${idx})">x</button>
+                    <span class="per-icon editable-text" contenteditable="${isEditMode}" onblur="updateList('personality', null, ${idx}, 'icon', this.innerText)">${item.icon}</span>
+                    <div class="per-title editable-text" contenteditable="${isEditMode}" onblur="updateList('personality', null, ${idx}, 'title', this.innerText)">${item.title}</div>
+                    <div class="per-desc editable-text" contenteditable="${isEditMode}" onblur="updateList('personality', null, ${idx}, 'desc', this.innerText)">${item.desc}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderBecoming() {
+            document.getElementById('becomingContainer').innerHTML = appData.becoming.map((item, idx) => `
+                <div class="goal-card delete-btn-wrapper">
+                    <button class="delete-item-btn" onclick="deleteItem('becoming', ${idx})">x</button>
+                    <div class="goal-icon editable-text" contenteditable="${isEditMode}" onblur="updateList('becoming', null, ${idx}, 'icon', this.innerText)">${item.icon}</div>
+                    <div class="goal-content">
+                        <h3 class="editable-text" contenteditable="${isEditMode}" onblur="updateList('becoming', null, ${idx}, 'title', this.innerText)">${item.title}</h3>
+                        <p class="editable-text" contenteditable="${isEditMode}" onblur="updateList('becoming', null, ${idx}, 'desc', this.innerText)">${item.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderMoments() {
+            document.getElementById('momentsContainer').innerHTML = appData.moments.map((item, idx) => `
+                <div class="moment-card delete-btn-wrapper">
+                    <button class="delete-item-btn" onclick="deleteItem('moments', ${idx})">x</button>
+                    <div class="image-box img-container">
+                        <img src="${item.image || ''}">
+                        <button class="edit-upload-btn" onclick="triggerUpload('moments', ${idx})">📷</button>
+                    </div>
+                    <div class="text editable-text" contenteditable="${isEditMode}" onblur="updateList('moments', null, ${idx}, 'text', this.innerText)">${item.text}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderGallery() {
+            document.getElementById('galleryContainer').innerHTML = appData.gallery.map((item, idx) => `
+                <div class="bento-item ${item.span === '2-2' ? 'span-2-col span-2-row' : item.span === '2-col' ? 'span-2-col' : item.span === '2-row' ? 'span-2-row' : ''} delete-btn-wrapper" onclick="${!isEditMode ? `openModal('${item.icon}', '${item.modalText}')` : ''}">
+                    <button class="delete-item-btn" onclick="deleteItem('gallery', ${idx})">x</button>
+                    <div class="bento-content" style="text-align:center">
+                        <div class="bento-icon editable-text" contenteditable="${isEditMode}" onblur="updateList('gallery', null, ${idx}, 'icon', this.innerText)">${item.icon}</div>
+                        <div class="bento-label editable-text" contenteditable="${isEditMode}" onblur="updateList('gallery', null, ${idx}, 'label', this.innerText)">${item.label}</div>
+                    </div>
+                    ${isEditMode ? `<input placeholder="Text Modal" value="${item.modalText}" onblur="updateList('gallery', null, ${idx}, 'modalText', this.value)" style="position:absolute; top:5px; left:5px; width:80%; z-index:90;">` : ''}
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('toggleEditBtn').addEventListener('click', function() {
+            isEditMode = !isEditMode;
+            this.classList.toggle('active', isEditMode);
+            document.body.classList.toggle('edit-mode', isEditMode);
+            document.querySelectorAll('.editable-text').forEach(el => el.contentEditable = isEditMode);
+            renderAll();
+        });
+
+        document.addEventListener('blur', function(e) {
+            if (e.target.dataset.section && e.target.dataset.field) {
+                appData[e.target.dataset.section][e.target.dataset.field] = e.target.innerText;
+                saveData();
+            }
+        }, true);
+
+        window.updateList = function(section, sub, idx, key, val) {
+            if (sub) appData[section][sub][idx][key] = val;
+            else appData[section][idx][key] = val;
+            saveData();
+        };
+
+        window.addItem = function(type) {
+            const empty = {
+                achievements: { text: "Thành tựu mới", image: "" },
+                freetime: { icon: "✨", title: "Hoạt động", desc: "Mô tả...", bg: "" },
+                personality: { icon: "🌟", title: "Tính cách", desc: "Mô tả..." },
+                becoming: { icon: "🎯", title: "Mục tiêu", desc: "Chi tiết..." },
+                moments: { text: "Khoảnh khắc", image: "" },
+                gallery: { icon: "📷", label: "Ảnh", modalText: "Chi tiết", span: "" }
+            };
+            if (type === 'achievements') appData.career.achievements.push(empty.achievements);
+            else appData[type].push(empty[type]);
+            saveData();
+            renderAll();
+        };
+
+        window.deleteItem = function(type, idx) {
+            if (!confirm("Xóa mục này?")) return;
+            if (type === 'achievements') appData.career.achievements.splice(idx, 1);
+            else appData[type].splice(idx, 1);
+            saveData();
+            renderAll();
+        };
+
+        window.triggerUpload = function(section, idx) {
+            document.getElementById('globalImageUpload').click();
+            activeUploadCallback = async (file) => {
+                try {
+                    const loadingMsg = document.createElement('div');
+                    loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;color:#000;padding:20px 40px;border-radius:10px;z-index:9999;font-weight:bold;box-shadow:0 10px 40px rgba(0,0,0,0.5);';
+                    loadingMsg.textContent = 'Đang up lên cloud, em iu đợi xíu... ⏳';
+                    document.body.appendChild(loadingMsg);
+
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('upload_preset', GLOBAL_CONFIG.cloudinary.uploadPreset);
+
+                    const response = await fetch(
+                        `https://api.cloudinary.com/v1_1/${GLOBAL_CONFIG.cloudinary.cloudName}/image/upload`,
+                        { method: 'POST', body: formData }
+                    );
+
+                    const data = await response.json();
+                    document.body.removeChild(loadingMsg);
+
+                    if (data.secure_url) {
+                        const imageUrl = data.secure_url;
+
+                        if (section === 'hero') appData.hero.image = imageUrl;
+                        else if (section === 'achievements') appData.career.achievements[idx].image = imageUrl;
+                        else if (section === 'freetime') appData.freetime[idx].bg = imageUrl;
+                        else if (section === 'moments') appData.moments[idx].image = imageUrl;
+
+                        saveData();
+                        renderAll();
+                    } else {
+                        alert('Upload thất bại. Vui lòng thử lại!');
+                    }
+                } catch (error) {
+                    console.error('Upload error:', error);
+                    alert('Lỗi khi upload ảnh. Vui lòng thử lại!');
+                    const loadingMsg = document.querySelector('div[style*="Đang up lên cloud, em iu đợi xíu... ⏳"]');
+                    if (loadingMsg) document.body.removeChild(loadingMsg);
+                }
+            };
+        };
+
+        document.getElementById('globalImageUpload').addEventListener('change', function(e) {
+            if (e.target.files && e.target.files[0]) {
+                if (activeUploadCallback) {
+                    activeUploadCallback(e.target.files[0]);
+                }
+            }
+            e.target.value = '';
+        });
+
+        function setTimeGreeting() {
+            const h = new Date().getHours();
+            let msg = h<11?"Sáng rồi, chúc em bé một ngày mới tốt lành ♫":h<14?"Trưa rồi, em bé ăn uống gì chưa? ♪":h<18?"Anh thích buổi chiều, đặc biệt là chiều em ♬":"Tối rồi, chúc bae ngủ ngon mơ anh ♭";
+            document.getElementById('greeting').innerHTML = `${msg} ✨`;
+        }
+
+        function createStars() {
+            const container = document.getElementById('star-container');
+            const notes = ['♪', '♫', '♬', '♩', '♭', '♮', '♯'];
+
+            for(let i=0; i<50; i++) {
+                const note = document.createElement('div');
+                note.className = 'music-note';
+                note.textContent = notes[Math.floor(Math.random() * notes.length)];
+                note.style.left = Math.random()*100+'%';
+                note.style.top = Math.random()*100+'%';
+                note.style.fontSize = (Math.random()*16 + 18)+'px';
+                note.style.setProperty('--duration', (Math.random()*4+3)+'s');
+                note.style.setProperty('--delay', Math.random()*5+'s');
+
+                note.addEventListener('click', function(e) {
+                    this.classList.add('bloom');
+                    setTimeout(() => {
+                        this.classList.remove('bloom');
+                    }, 600);
+                });
+
+                container.appendChild(note);
+            }
+        }
+
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initParticles() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for(let i=0; i<50; i++) {
+                particles.push({
+                    x: Math.random()*canvas.width,
+                    y: Math.random()*canvas.height,
+                    dx: (Math.random()-0.5)*0.5,
+                    dy: (Math.random()-0.5)*0.5,
+                    size: Math.random()*2+1,
+                    color: `rgba(255, 255, 255, ${Math.random()*0.5})`
+                });
+            }
+        }
+
+        function animateParticles() {
+            requestAnimationFrame(animateParticles);
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.dx;
+                p.y += p.dy;
+                if(p.x<0||p.x>canvas.width) p.dx*=-1;
+                if(p.y<0||p.y>canvas.height) p.dy*=-1;
+                ctx.beginPath();
+                ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+                ctx.fillStyle=p.color;
+                ctx.fill();
+            });
+        }
+
+        const bgMusic = document.getElementById('bgMusic');
+        const musicControl = document.getElementById('musicControl');
+        let isPlaying = false;
+        
+
+        musicControl.addEventListener('click', () => {
+            if(isPlaying) {
+                bgMusic.pause();
+                musicControl.classList.remove('playing');
+                document.getElementById('playIcon').style.display='block';
+                document.getElementById('pauseIcon').style.display='none';
+            } else {
+                bgMusic.play().then(() => {
+                    musicControl.classList.add('playing');
+                    document.getElementById('playIcon').style.display='none';
+                    document.getElementById('pauseIcon').style.display='block';
+                }).catch(e => alert("Không thể phát nhạc tự động. Hãy thử click lại lần nữa!"));
+            }
+            isPlaying = !isPlaying;
+        });
+
+        window.openModal = (icon,text) => {
+            document.getElementById('modalIcon').textContent = icon;
+            document.getElementById('modalText').textContent = text;
+            document.getElementById('imageModal').classList.add('active');
+        };
+
+        window.closeModal = () => document.getElementById('imageModal').classList.remove('active');
+
+        window.addEventListener('load', () => {
+            initApp();
+            setTimeGreeting();
+            createStars();
+            initParticles();
+            animateParticles();
+
+            document.body.addEventListener('click', function initAudio() {
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    musicControl.classList.add('playing');
+                    document.getElementById('playIcon').style.display='none';
+                    document.getElementById('pauseIcon').style.display='block';
+                }).catch(()=>{});
+                document.body.removeEventListener('click', initAudio);
+            }, {once:true});
+        });
+
+        document.getElementById('rocketBtn').addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('.note-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetSection = document.querySelector(targetId);
+                
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // Update active state
+                    document.querySelectorAll('.note-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Highlight active section on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section[id]');
+            const scrollPosition = window.scrollY + 200;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                const sectionId = section.getAttribute('id');
+
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    document.querySelectorAll('.note-link').forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${sectionId}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        });
+
+
+        function goTree(){
+  window.location.href = 'tree.html';
+}
+
+
+function goKhoa(){
+    window.location.href = "khoa.html";
+}
+
+
+
+
+    </script>
+
+
+<!-- PAGE FLIP -->
+<div id="page-flip"></div>
+
+<!-- SNOW / DUST -->
+<canvas id="snow-canvas"></canvas>
+
+
+
+
+</body>
+</html>

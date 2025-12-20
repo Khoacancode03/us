@@ -1,0 +1,54 @@
+let GLOBAL_CONFIG = {
+            cloudinary: {
+                cloudName: 'ddios7cyto',     // Ví dụ: 'doxyz123'
+                uploadPreset: 'QN221205'   // Ví dụ: 'preset_noel'
+            },
+            firebase: {
+                apiKey: "BF4FeUHM6SvafkQHyQUaUdPTmUcbK1dAfbZLwGT3ic2i91ittOHzFNo5I5ThR",        // Ví dụ: 'AIzaSyDn...'
+                authDomain: "qn-source-storage.firebaseapp.com",
+                databaseURL: "https://qn-source-storage-default-rtdb.firebaseio.com/",   // Ví dụ: 'https://xxx.firebaseio.com'
+                projectId: "qn-source-storage",     // Ví dụ: 'christmas-123'
+                storageBucket: "",
+                messagingSenderId: "",
+                appId: ""
+            }
+        };
+function loadConfig() {
+            // Ưu tiên lấy từ Code (Hardcode), nếu code trống thì mới lấy từ LocalStorage (Test)
+            const localCloud = localStorage.getItem('cloudConfig');
+            const localFb = localStorage.getItem('firebaseConfig');
+
+            // Logic Cloudinary: Nếu trong code chưa điền (hoặc là placeholder) thì thử lấy localStorage
+            if (GLOBAL_CONFIG.cloudinary.cloudName === 'dios7cyto' || !GLOBAL_CONFIG.cloudinary.cloudName) {
+                if (localCloud) {
+                    const parsed = JSON.parse(localCloud);
+                    GLOBAL_CONFIG.cloudinary.cloudName = parsed.cloudName;
+                    GLOBAL_CONFIG.cloudinary.uploadPreset = parsed.uploadPreset;
+                }
+            }
+
+            // Logic Firebase
+            if (GLOBAL_CONFIG.firebase.apiKey === 'BF4FeUHM6SvafkQHyQUaUdPTmUcbK1dAfbZLwGT3ic2i91ittOHzFNo5I5ThR' || !GLOBAL_CONFIG.firebase.apiKey) {
+                if (localFb) {
+                    const parsed = JSON.parse(localFb);
+                    GLOBAL_CONFIG.firebase.apiKey = parsed.apiKey;
+                    GLOBAL_CONFIG.firebase.projectId = parsed.projectId;
+                    GLOBAL_CONFIG.firebase.databaseURL = parsed.databaseURL;
+                }
+            }
+
+            // Fill UI Inputs (để người dùng check xem đang dùng key nào)
+            const cName = GLOBAL_CONFIG.cloudinary.cloudName === 'dios7cyto' ? '' : GLOBAL_CONFIG.cloudinary.cloudName;
+            const cPreset = GLOBAL_CONFIG.cloudinary.uploadPreset === 'QN221205' ? '' : GLOBAL_CONFIG.cloudinary.uploadPreset;
+            const fKey = GLOBAL_CONFIG.firebase.apiKey === 'BF4FeUHM6SvafkQHyQUaUdPTmUcbK1dAfbZLwGT3ic2i91ittOHzFNo5I5ThR' ? '' : GLOBAL_CONFIG.firebase.apiKey;
+            const fProj = GLOBAL_CONFIG.firebase.projectId === 'qn-source-storage' ? '' : GLOBAL_CONFIG.firebase.projectId;
+            const fUrl = GLOBAL_CONFIG.firebase.databaseURL === 'https://qn-source-storage-default-rtdb.firebaseio.com/' ? '' : GLOBAL_CONFIG.firebase.databaseURL;
+
+            if(document.getElementById('cloudNameInput')) {
+                document.getElementById('cloudNameInput').value = cName || '';
+                document.getElementById('presetInput').value = cPreset || '';
+                document.getElementById('fbApiKey').value = fKey || '';
+                document.getElementById('fbProjectId').value = fProj || '';
+                document.getElementById('fbDbUrl').value = fUrl || '';
+            }
+        }

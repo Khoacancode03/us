@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merry Christmas My Princess 🎄</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            background-color: #000;
+            height: 100vh;
+            width: 100vw;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        /* Video */
+        #introVideo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        /* Buttons */
+        #controlGroup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 20px;
+            z-index: 50;
+            transition: all 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        #controlGroup.corner {
+            top: auto;
+            left: auto;
+            bottom: 40px;
+            right: 40px;
+            transform: translate(0, 0);
+        }
+
+        .action-btn {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .action-btn:hover {
+            background: rgba(196, 30, 58, 0.9);
+            transform: scale(1.1);
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(196, 30, 58, 0.6);
+        }
+
+        .fade-out {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8);
+        }
+
+        /* Transition Layer */
+        #transitionLayer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            
+            /* FIX: Prevent blocking click */
+            pointer-events: none !important;
+        }
+
+        /* FIX: children also ignore pointer events */
+        #transitionLayer * {
+            pointer-events: none !important;
+        }
+
+        /* Ice glow */
+        #iceGlowBackdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #e0f7ff 0%, #000 80%);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 1s;
+
+            /* FIX */
+            pointer-events: none !important;
+        }
+
+        /* Canvas */
+        #iceBurstCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 200;
+            pointer-events: none !important; /* FIX */
+            opacity: 0;
+        }
+
+        .paper-half {
+            position: relative;
+            width: 55%;
+            height: 100%;
+            background:
+                linear-gradient(135deg, #8b0000 0%, #500000 100%),
+                url('https://www.transparenttextures.com/patterns/crumpled-paper.png');
+            background-blend-mode: multiply;
+            box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.8);
+            transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+        }
+
+        .paper-half::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                45deg, transparent, transparent 10px,
+                rgba(0, 0, 0, 0.1) 10px, rgba(0, 0, 0, 0.1) 20px
+            );
+            opacity: 0.3;
+        }
+
+        .paper-left {
+            transform: translateX(-105%);
+            border-right: 2px solid #400000;
+            clip-path: polygon(0 0, 100% 0, 95% 5%, 100% 10%, 95% 15%, 100% 20%, 95% 25%, 100% 30%, 95% 35%, 100% 40%, 95% 45%, 100% 50%, 95% 55%, 100% 60%, 95% 65%, 100% 70%, 95% 75%, 100% 80%, 95% 85%, 100% 90%, 95% 95%, 100% 100%, 0 100%);
+            z-index: 102;
+            margin-right: -1px;
+        }
+
+        .paper-right {
+            transform: translateX(105%);
+            border-left: 2px solid #400000;
+            clip-path: polygon(0 0, 5% 5%, 0 10%, 5% 15%, 0 20%, 5% 25%, 0 30%, 5% 35%, 0 40%, 5% 45%, 0 50%, 5% 55%, 0 60%, 5% 65%, 0 70%, 5% 75%, 0 80%, 5% 85%, 0 90%, 5% 95%, 0 100%, 100% 100%, 100% 0);
+            z-index: 102;
+            margin-left: -1px;
+        }
+
+        .ribbon {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(0deg, #daa520, #ffd700, #daa520);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            transform: translateY(-50%);
+            z-index: 103;
+        }
+
+        .slam-shut .paper-left { transform: translateX(5%); }
+        .slam-shut .paper-right { transform: translateX(-5%); }
+
+        .shake-screen {
+            animation: violentShake 0.3s cubic-bezier(.36,.07,.19,.97) both infinite;
+        }
+
+        @keyframes violentShake {
+            10%, 90% { transform: translate3d(-2px, 1px, 0) rotate(-0.5deg); }
+            20%, 80% { transform: translate3d(3px, -1px, 0) rotate(0.5deg); }
+            30%, 50%, 70% { transform: translate3d(-4px, -2px, 0) rotate(-1deg); }
+            40%, 60% { transform: translate3d(4px, 2px, 0) rotate(1deg); }
+        }
+
+        .slow-tear .paper-left {
+            transition: transform 2.5s ease-in;
+            transform: translateX(-15%) rotate(-5deg);
+        }
+
+        .slow-tear .paper-right {
+            transition: transform 2.5s ease-in;
+            transform: translateX(15%) rotate(5deg);
+        }
+
+        .show-glow #iceGlowBackdrop { opacity: 1; }
+
+        .burst-open .paper-left {
+            transition: transform 0.4s ease-out, opacity 0.4s;
+            transform: translateX(-150%) rotate(-20deg);
+            opacity: 0;
+        }
+
+        .burst-open .paper-right {
+            transition: transform 0.4s ease-out, opacity 0.4s;
+            transform: translateX(150%) rotate(20deg);
+            opacity: 0;
+        }
+
+        .ice-active { opacity: 1 !important; }
+    </style>
+</head>
+
+<body>
+
+    <!-- Video -->
+    <video id="introVideo" autoplay muted playsinline>
+        <source src="santa.mp4" type="video/mp4">
+    </video>
+
+    <!-- Audio -->
+    <audio id="sfxSlam" src="slam.mp3"></audio>
+    <audio id="sfxRumble" src="rumble.mp3" loop></audio>
+    <audio id="sfxTearSlow" src="tear.mp3"></audio>
+
+    <!-- Buttons -->
+    <div id="controlGroup">
+        <button class="action-btn" id="unmuteBtn" onclick="enableSound()">Bật tiếng</button>
+        <button class="action-btn" onclick="skipVideo()">Skip Video</button>
+    </div>
+
+    <!-- Effects -->
+    <div id="iceGlowBackdrop"></div>
+
+    <div id="transitionLayer">
+        <div class="paper-half paper-left"><div class="ribbon"></div></div>
+        <div class="paper-half paper-right"><div class="ribbon"></div></div>
+    </div>
+
+    <canvas id="iceBurstCanvas"></canvas>
+
+    <!-- JS -->
+    <script>
+        const video = document.getElementById('introVideo');
+        const controlGroup = document.getElementById('controlGroup');
+        const unmuteBtn = document.getElementById('unmuteBtn');
+        const transitionLayer = document.getElementById('transitionLayer');
+
+        const sfxSlam = document.getElementById('sfxSlam');
+        const sfxRumble = document.getElementById('sfxRumble');
+        const sfxTearSlow = document.getElementById('sfxTearSlow');
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                controlGroup.classList.add('corner');
+            }, 2000);
+
+            video.play().catch(() => console.log("Autoplay blocked"));
+        });
+
+        function enableSound() {
+            video.muted = false;
+            video.volume = 1.0;
+            unmuteBtn.classList.add('fade-out');
+            setTimeout(() => unmuteBtn.style.display = "none", 300);
+        }
+
+        function skipVideo() {
+            video.pause();
+            startDramaticTransition();
+        }
+
+        video.addEventListener('ended', startDramaticTransition);
+
+        function startDramaticTransition() {
+            controlGroup.style.display = 'none';
+
+            transitionLayer.classList.add('slam-shut');
+            try { sfxSlam.play(); } catch (e) {}
+
+            setTimeout(() => {
+                document.body.classList.add('shake-screen');
+                document.body.classList.add('show-glow');
+
+                try {
+                    sfxRumble.play();
+                    sfxTearSlow.currentTime = 0;
+                    sfxTearSlow.play();
+                } catch (e) {}
+
+                transitionLayer.classList.add('slow-tear');
+
+                setTimeout(() => {
+                    sfxRumble.pause();
+                    document.body.classList.remove('shake-screen');
+
+                    transitionLayer.classList.add('burst-open');
+
+                    triggerIceBurst();
+
+                    setTimeout(() => {
+                        sessionStorage.setItem('userInteracted', 'true');
+
+                        window.location.href = 'tree.html';
+                    }, 2000);
+
+                }, 2200);
+
+            }, 600);
+        }
+
+        function triggerIceBurst() {
+            const canvas = document.getElementById('iceBurstCanvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.classList.add('ice-active');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = 450;
+
+            for (let i = 0; i < particleCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 25 + 5;
+
+                particles.push({
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    size: Math.random() * 10 + 3,
+                    type: Math.random() > 0.6 ? 'star' : 'shard',
+                    life: 1.0,
+                    decay: Math.random() * 0.015 + 0.005,
+                    rotation: Math.random() * 360,
+                    rotSpeed: (Math.random() - 0.5) * 15
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let active = false;
+
+                particles.forEach(p => {
+                    if (p.life > 0) {
+                        active = true;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.3;
+                        p.rotation += p.rotSpeed;
+                        p.life -= p.decay;
+                        p.vx *= 0.95;
+
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate(p.rotation * Math.PI / 180);
+                        ctx.globalAlpha = p.life;
+
+                        ctx.fillStyle = "rgba(225, 250, 255, 0.95)";
+                        ctx.shadowColor = "rgba(120, 220, 255, 0.9)";
+                        ctx.shadowBlur = 8;
+
+                        const s = p.size;
+
+                        if (p.type === 'star') {
+                            ctx.beginPath();
+                            ctx.moveTo(0, -s);
+                            ctx.quadraticCurveTo(s * 0.2, -s * 0.2, s, 0);
+                            ctx.quadraticCurveTo(s * 0.2, s * 0.2, 0, s);
+                            ctx.quadraticCurveTo(-s * 0.2, s * 0.2, -s, 0);
+                            ctx.quadraticCurveTo(-s * 0.2, -s * 0.2, 0, -s);
+                            ctx.fill();
+                        } else {
+                            ctx.beginPath();
+                            ctx.moveTo(0, -s);
+                            ctx.lineTo(s * 0.6, 0);
+                            ctx.lineTo(0, s * 1.2);
+                            ctx.lineTo(-s * 0.6, 0);
+                            ctx.fill();
+                        }
+
+                        ctx.restore();
+                    }
+                });
+
+                if (active) requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+    </script>
+</body>
+
+</html>

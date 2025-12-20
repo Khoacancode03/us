@@ -1,0 +1,181 @@
+:root {
+    --red: #c0392b;
+    --green: #145a32;
+    --gold: #f1c40f;
+    --bg-gradient: linear-gradient(-45deg, #000000, #1a0b0b, #0f1f0f, #1e272e);
+}
+
+body {
+    margin: 0; padding: 0;
+    font-family: 'Nunito', sans-serif;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* --- 1. DYNAMIC BACKGROUND (NỀN ĐỘNG) --- */
+.dynamic-bg {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--bg-gradient);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    z-index: -2;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* --- 2. SNOW EFFECT (TUYẾT RƠI TOÀN MÀN HÌNH) --- */
+#snow-container {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: -1;
+}
+.snowflake {
+    position: absolute; top: -10px;
+    color: white;
+    text-shadow: 0 0 5px rgba(255,255,255,0.8);
+    animation: fall linear infinite;
+}
+@keyframes fall {
+    to { transform: translateY(110vh) rotate(360deg); }
+}
+
+/* --- QUẢN LÝ SCENE (CÁC MÀN HÌNH) --- */
+.scene {
+    width: 100vw; min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 1s ease-in-out;
+}
+.hidden { display: none !important; opacity: 0; }
+.fade-in { animation: fadeIn 1.5s forwards; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* --- SCENE 1: SANTA & GIFT --- */
+#scene-intro { position: relative; overflow: hidden; }
+
+/* Ông già Noel */
+.santa-sleigh {
+    position: absolute; top: 10%; right: -200px; /* Bắt đầu ngoài màn hình */
+    width: 150px;
+    filter: drop-shadow(0 0 10px gold);
+}
+.santa-sleigh img { width: 100%; }
+
+/* Animation bay qua */
+.fly-across {
+    animation: flySanta 6s linear forwards;
+}
+@keyframes flySanta {
+    0% { transform: translateX(0) translateY(0) rotate(5deg); right: -200px; }
+    20% { transform: translateX(-20vw) translateY(20px); }
+    50% { transform: translateX(-50vw) translateY(-10px); } /* Điểm ném quà */
+    100% { transform: translateX(-120vw) translateY(0); right: 100%; }
+}
+
+/* Hộp quà */
+.gift-container {
+    position: relative; width: 120px; height: 120px;
+    cursor: pointer; z-index: 100;
+}
+.gift-box-body {
+    width: 100%; height: 100%; background: var(--red);
+    position: absolute; bottom: 0; border-radius: 10px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+}
+.gift-lid {
+    width: 110%; height: 25%; background: #a93226;
+    position: absolute; top: -10%; left: -5%;
+    border-radius: 5px; z-index: 2;
+}
+.gift-ribbon {
+    position: absolute; width: 20%; height: 100%; background: var(--gold);
+    left: 40%; top: 0;
+}
+.bow {
+    position: absolute; top: -25px; left: 50%; transform: translateX(-50%);
+    width: 50px; height: 30px; background: var(--gold);
+    border-radius: 50%;
+}
+.glow-effect {
+    position: absolute; width: 150px; height: 150px;
+    background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(0,0,0,0) 70%);
+    top: 50%; left: 50%; transform: translate(-50%, -50%);
+    animation: pulse 2s infinite; z-index: -1;
+}
+@keyframes pulse { 0% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); } 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); } }
+.gift-hint {
+    position: absolute; bottom: -50px; width: 200px; left: -40px;
+    text-align: center; color: var(--gold); font-weight: bold;
+    animation: bounce 1s infinite;
+}
+
+/* Hiệu ứng rơi của quà */
+.drop-animation {
+    animation: dropGift 1s ease-out forwards;
+}
+@keyframes dropGift {
+    0% { transform: translateY(-500px) scale(0.1); opacity: 0; }
+    60% { transform: translateY(0) scale(1.1); opacity: 1; }
+    80% { transform: translateY(-20px) scale(1); }
+    100% { transform: translateY(0); }
+}
+
+/* Hiệu ứng mở quà */
+.open-gift-anim .gift-lid {
+    animation: flyLid 0.5s forwards;
+}
+.open-gift-anim .gift-box-body {
+    animation: explodeBox 0.5s forwards;
+}
+@keyframes flyLid { to { transform: translateY(-100px) rotate(-45deg); opacity: 0; } }
+@keyframes explodeBox { to { transform: scale(1.5); opacity: 0; } }
+
+/* --- SCENE 2: LOADING --- */
+#scene-loading { background: rgba(0,0,0,0.7); }
+.loader-content { text-align: center; }
+.reindeer-run { width: 100px; margin-bottom: 20px; }
+.progress-bar {
+    width: 300px; height: 10px; background: #333;
+    border-radius: 5px; overflow: hidden; margin: 10px auto;
+    border: 1px solid var(--gold);
+}
+.progress-fill {
+    height: 100%; background: var(--red); width: 0%;
+    transition: width 0.1s;
+    box-shadow: 0 0 10px var(--red);
+}
+
+/* --- SCENE 3: MAIN --- */
+#scene-main { justify-content: flex-start; padding-top: 50px; display: block; }
+.main-header { text-align: center; margin-bottom: 50px; }
+.avatar-area {
+    width: 150px; height: 150px; border-radius: 50%;
+    border: 4px solid var(--gold); margin: 0 auto 20px;
+    position: relative; overflow: hidden;
+}
+.avatar-area img { width: 100%; height: 100%; object-fit: cover; }
+.love-badge {
+    background: rgba(255,255,255,0.1); padding: 8px 15px;
+    border-radius: 20px; display: inline-block; margin-top: 10px;
+    border: 1px solid var(--gold); color: var(--gold);
+}
+.nav-menu { text-align: center; margin-bottom: 40px; }
+.nav-menu button {
+    background: transparent; border: 1px solid var(--gold);
+    color: white; padding: 10px 20px; margin: 0 5px;
+    border-radius: 20px; cursor: pointer; transition: 0.3s;
+}
+.nav-menu button:hover { background: var(--red); border-color: var(--red); }
+.content-section {
+    max-width: 800px; margin: 0 auto 50px; padding: 20px;
+    background: rgba(0,0,0,0.3); border-radius: 15px;
+}
+h2 { font-family: 'Dancing Script', cursive; color: var(--gold); text-align: center; font-size: 2.5rem; }
+
+/* Envelope (Thư) giữ nguyên như cũ */
+.envelope-area { text-align: center; cursor: pointer; height: 100px; }
+.envelope { width: 100px; height: 70px; background: #fff; margin: 0 auto; position: relative; }
+.envelope:before { content:''; position: absolute; border-left: 50px solid transparent; border-right: 50px solid transparent; border-top: 35px solid var(--red); }

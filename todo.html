@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas Wishlist & Todo</title>
+    <style>
+        :root {
+            --noel-red: #e63946;
+            --noel-green: #2a9d8f;
+            --gold: #f4a261;
+            --dark-bg: #0a1128;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at center, #1e3a5f 0%, #0a1128 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .snow-canvas {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .lights-wire {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 60px;
+            z-index: 2;
+            pointer-events: none;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 20px;
+        }
+
+        .light-bulb {
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            position: relative;
+            top: 15px;
+            animation: lightGlow 2s infinite alternate;
+        }
+        .light-bulb::before {
+            content: ''; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
+            width: 2px; height: 15px; background: #555;
+        }
+        .light-bulb:nth-child(odd) { background: #ff6b6b; box-shadow: 0 5px 15px #ff6b6b; animation-delay: 0s; }
+        .light-bulb:nth-child(even) { background: #4ecdc4; box-shadow: 0 5px 15px #4ecdc4; animation-delay: 1s; }
+        .light-bulb:nth-child(3n) { background: #ffe66d; box-shadow: 0 5px 15px #ffe66d; animation-delay: 0.5s; }
+
+        @keyframes lightGlow {
+            from { opacity: 0.5; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1.1); box-shadow: 0 0 20px currentColor; }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 80px 20px 40px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            background: linear-gradient(45deg, var(--gold), #ff9f43, var(--noel-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(244, 162, 97, 0.3);
+            animation: titleFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes titleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header p { color: #a8e6cf; font-size: 1.2em; margin-top: 10px; }
+
+        .add-btn-wrapper { text-align: center; margin-bottom: 40px; }
+        
+        .add-new-btn {
+            background: linear-gradient(135deg, var(--noel-green), #218c74);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(42, 157, 143, 0.5);
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .add-new-btn:hover { transform: translateY(-3px) scale(1.05); box-shadow: 0 0 30px rgba(42, 157, 143, 0.8); }
+
+        .todo-list { display: flex; flex-direction: column; gap: 25px; }
+
+        .todo-item {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .todo-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+            background: linear-gradient(to bottom, var(--gold), var(--noel-red));
+            opacity: 0.8;
+        }
+
+        .todo-item:hover {
+            transform: translateY(-5px) translateX(5px);
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .todo-checkbox {
+            appearance: none;
+            width: 30px; height: 30px;
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        .todo-checkbox:checked { background: var(--noel-green); border-color: var(--noel-green); }
+        .todo-checkbox:checked::after {
+            content: '✓'; position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: white; font-weight: bold; font-size: 1.2em;
+        }
+
+        .todo-image-wrapper {
+            width: 140px; height: 100px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .todo-image {
+            width: 100%; height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s;
+        }
+        
+        .todo-item:hover .todo-image { transform: scale(1.1); }
+
+        .todo-content { flex: 1; min-width: 0; }
+        
+        .todo-title {
+            font-size: 1.5em; font-weight: bold; margin-bottom: 5px;
+            color: #fff;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        
+        .todo-meta { font-size: 0.9em; color: #ccc; display: flex; gap: 15px; align-items: center; }
+        .todo-meta span { display: flex; align-items: center; gap: 5px; }
+
+        .todo-actions { display: flex; gap: 10px; }
+
+        .action-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s;
+        }
+        .btn-view:hover { background: var(--gold); color: #000; }
+        .btn-delete:hover { background: var(--noel-red); color: white; transform: rotate(90deg); }
+
+        .todo-item.completed { opacity: 0.6; filter: grayscale(0.5); }
+        .todo-item.completed .todo-title { text-decoration: line-through; color: #888; }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 1000;
+            backdrop-filter: blur(8px);
+            align-items: center; justify-content: center;
+        }
+        .modal.active { display: flex; animation: fadeIn 0.3s; }
+
+        .modal-content {
+            background: linear-gradient(145deg, #1e3a5f, #0a1128);
+            border: 2px solid var(--gold);
+            width: 90%; max-width: 600px;
+            border-radius: 25px;
+            padding: 30px;
+            position: relative;
+            max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 0 50px rgba(244, 162, 97, 0.2);
+            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .close-modal {
+            position: absolute; top: 15px; right: 20px;
+            font-size: 2em; color: #888; cursor: pointer;
+            transition: color 0.3s;
+        }
+        .close-modal:hover { color: var(--noel-red); }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; color: var(--gold); margin-bottom: 8px; font-weight: bold; }
+        
+        .form-input {
+            width: 100%; padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px; color: white;
+            font-size: 1em;
+        }
+        .form-input:focus { border-color: var(--gold); outline: none; }
+        textarea.form-input { min-height: 100px; resize: vertical; }
+
+        .preview-box {
+            width: 100%; height: 250px;
+            background: rgba(0,0,0,0.5);
+            border: 2px dashed rgba(255,255,255,0.3);
+            border-radius: 15px;
+            margin-top: 10px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .preview-box img { width: 100%; height: 100%; object-fit: contain; }
+
+        .btn-submit {
+            width: 100%; padding: 15px;
+            background: linear-gradient(to right, var(--noel-red), var(--gold));
+            border: none; border-radius: 12px;
+            color: white; font-weight: bold; font-size: 1.1em;
+            cursor: pointer; margin-top: 10px;
+            transition: all 0.3s;
+        }
+        .btn-submit:hover { transform: scale(1.02); box-shadow: 0 5px 20px rgba(230, 57, 70, 0.5); }
+
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 17, 40, 0.95);
+            z-index: 2000; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+        }
+        .santa-bouncer { font-size: 80px; animation: bounce 1s infinite alternate; z-index: 2; }
+        .snow-spinner {
+            position: absolute; width: 140px; height: 140px;
+            border: 3px dashed rgba(255,255,255,0.2);
+            border-top-color: var(--noel-red); border-bottom-color: var(--noel-green);
+            border-radius: 50%; animation: spin 4s linear infinite;
+        }
+        .loading-text {
+            margin-top: 30px; font-size: 1.5em; font-weight: bold;
+            background: linear-gradient(to right, #f4a261, #e63946, #2a9d8f);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: shine 2s infinite;
+        }
+
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+            background: white; color: #333;
+            padding: 15px 30px; border-radius: 50px;
+            font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 3000; transition: all 0.5s; opacity: 0;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        .settings-btn {
+            position: fixed; bottom: 20px; right: 20px;
+            width: 50px; height: 50px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--gold);
+            border-radius: 50%; color: var(--gold);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5em; cursor: pointer; z-index: 100;
+            transition: all 0.3s;
+        }
+        .settings-btn:hover { background: var(--gold); color: black; transform: rotate(90deg); }
+
+        /* Date Time Input Styles */
+        .datetime-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        .datetime-inputs input {
+            text-align: center;
+        }
+
+        @keyframes bounce { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes shine { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .nav-btn{
+  position:fixed;
+  top:20px;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.4rem;
+  cursor:pointer;
+  z-index:999;
+  transition:.35s ease;
+  box-shadow:0 8px 25px rgba(0,0,0,.4);
+}
+
+.nav-btn:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 20px rgba(248,178,41,.8);
+}
+
+.nav-left{left:20px}
+.nav-right{right:20px}
+
+/* ===== PAGE LOADER ===== */
+#page-loader{
+  position:fixed;
+  inset:0;
+  background:radial-gradient(circle at top,#0b1a4a,#050f2c 70%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+  transition:opacity .8s ease, visibility .8s ease;
+}
+
+#page-loader.hide{
+  opacity:0;
+  visibility:hidden;
+}
+
+.loader-content{
+  text-align:center;
+  color:#fff;
+}
+
+.loader-content h2{
+  font-family:'Playfair Display',serif;
+  font-size:2.4rem;
+  color:#f8b229;
+  text-shadow:0 0 20px rgba(248,178,41,.8);
+  margin-bottom:20px;
+}
+
+.tree{
+  font-size:4rem;
+  animation:treeGlow 2s infinite alternate;
+  margin-bottom:10px;
+}
+
+@keyframes treeGlow{
+  from{filter:drop-shadow(0 0 10px #f8b229)}
+  to{filter:drop-shadow(0 0 30px #ffd56a)}
+}
+
+.progress-wrap{
+  width:260px;
+  height:10px;
+  background:rgba(255,255,255,.2);
+  border-radius:999px;
+  overflow:hidden;
+  margin:20px auto;
+}
+
+.progress-bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#f8b229,#ffd56a,#fff);
+  box-shadow:0 0 15px rgba(248,178,41,.9);
+  animation:loading 2.5s infinite;
+}
+
+@keyframes loading{
+  0%{width:0%}
+  60%{width:100%}
+  100%{width:100%}
+}
+
+.loader-content p{
+  opacity:.8;
+  font-style:italic;
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="nav-btn nav-left" onclick="goTree()">
+  ⬅
+</div>
+
+<!-- Christmas Loader -->
+<div id="page-loader">
+  <div class="loader-content">
+    <div class="tree">🎄</div>
+    <h2>Loading...</h2>
+
+    <div class="progress-wrap">
+      <div class="progress-bar"></div>
+    </div>
+
+    <p>Vạn vật đến từ em...</p>
+  </div>
+</div>
+
+<audio id="bgMusic" src="xmayday.mp3" loop></audio>
+
+
+    <canvas id="snowCanvas" class="snow-canvas"></canvas>
+    <div class="lights-wire">
+        <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+        <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+        <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+        <div class="light-bulb"></div><div class="light-bulb"></div><div class="light-bulb"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>✨ Our Christmas Plan ✨</h1>
+            <p>🎅 Những điều chúng ta sẽ làm cùng nhau 🎄</p>
+        </div>
+
+        <div class="add-btn-wrapper">
+            <button class="add-new-btn" onclick="window.openModal()">
+                <span>🎁</span> Thêm kế hoạch mới
+            </button>
+        </div>
+
+        <div class="todo-list" id="todoList"></div>
+    </div>
+
+    <div class="modal" id="todoModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="window.closeModal()">×</span>
+            <h2 style="text-align:center; color: var(--gold); margin-bottom:20px;">🎄 Chi Tiết Kế Hoạch</h2>
+            
+            <div class="form-group">
+                <label>🖼️ Hình ảnh kỷ niệm</label>
+                <input type="file" id="imgInput" accept="image/*" style="display:none" onchange="window.handleImageSelect(this)">
+                <button type="button" onclick="document.getElementById('imgInput').click()" style="background:#444; color:white; border:1px solid #666; padding:8px 15px; border-radius:5px; cursor:pointer;">📂 Chọn ảnh từ máy</button>
+                <div class="preview-box" id="previewBox">
+                    <span style="color:#aaa">Chưa có ảnh</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>📝 Tên kế hoạch</label>
+                <input type="text" id="titleInput" class="form-input" placeholder="Ví dụ: Đi Đà Lạt, Ăn tối...">
+            </div>
+
+            <div class="form-group">
+                <label>📍 Địa điểm</label>
+                <input type="text" id="locInput" class="form-input" placeholder="Ở đâu...">
+            </div>
+
+            <div class="form-group">
+                <label>⏰ Thời gian (ngày-tháng-năm giờ:phút)</label>
+                <div class="datetime-inputs">
+                    <input type="number" id="dayInput" class="form-input" placeholder="Ngày" min="1" max="31">
+                    <input type="number" id="monthInput" class="form-input" placeholder="Tháng" min="1" max="12">
+                    <input type="number" id="yearInput" class="form-input" placeholder="Năm" min="2024">
+                    <input type="number" id="hourInput" class="form-input" placeholder="Giờ" min="0" max="23">
+                    <input type="number" id="minuteInput" class="form-input" placeholder="Phút" min="0" max="59">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>💭 Lời nhắn nhủ</label>
+                <textarea id="descInput" class="form-input" placeholder="Viết gì đó ngọt ngào..."></textarea>
+            </div>
+
+            <button class="btn-submit" onclick="window.saveTodo()">✅ Lưu Kế Hoạch</button>
+        </div>
+    </div>
+
+    <div class="modal" id="settingsModal">
+        <div class="modal-content" style="max-width: 800px;">
+            <span class="close-modal" onclick="document.getElementById('settingsModal').classList.remove('active')">×</span>
+            <h2 style="color: var(--gold); text-align: center; margin-bottom: 20px;">⚙️ Cấu hình Hệ thống</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+                    <h3 style="color: var(--noel-green); margin-bottom: 10px;">1. Cloudinary (Lưu Ảnh)</h3>
+                    <div class="form-group">
+                        <label>Cloud Name</label>
+                        <input type="text" id="cloudNameInput" class="form-input" placeholder="vd: mycloud123">
+                    </div>
+                    <div class="form-group">
+                        <label>Upload Preset (Unsigned)</label>
+                        <input type="text" id="presetInput" class="form-input" placeholder="vd: my_preset">
+                    </div>
+                    <p style="font-size: 0.8em; color: #aaa;">* Vào Settings -> Upload -> Add preset -> Mode: Unsigned.</p>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px;">
+                    <h3 style="color: var(--noel-red); margin-bottom: 10px;">2. Firebase (Lưu Dữ liệu)</h3>
+                    <div class="form-group">
+                        <label>API Key</label>
+                        <input type="text" id="fbApiKey" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label>Database URL</label>
+                        <input type="text" id="fbDbUrl" class="form-input" placeholder="https://...firebaseio.com">
+                    </div>
+                    <p style="font-size: 0.8em; color: #aaa;">* Project Settings -> General -> Config.</p>
+                </div>
+            </div>
+            
+            <button class="btn-submit" onclick="window.saveSettings()" style="margin-top: 20px;">💾 Lưu Cấu Hình & Kết Nối</button>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div style="position: relative; display: flex; justify-content: center; align-items: center;">
+            <div class="snow-spinner"></div>
+            <div class="santa-bouncer">🎅</div>
+        </div>
+        <div class="loading-text" id="loadingText">Em yêu chờ chút xíu nhé...</div>
+    </div>
+
+    <div class="toast" id="toast">✅ Đã lưu thành công!</div>
+    <button class="settings-btn" onclick="document.getElementById('settingsModal').classList.add('active')">⚙️</button>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // PRE-CONFIGURED SETTINGS
+        let GLOBAL_CONFIG = {
+            cloudinary: {
+                cloudName: 'dios7cyto',
+                uploadPreset: 'QN221205'
+            },
+            firebase: {
+                apiKey: "BF4FeUHM6SvafkQHyQUaUdPTmUcbK1dAfbZLwGT3ic2i91ittOHzFNo5I5ThR",
+                authDomain: "qn-source-storage.firebaseapp.com",
+                databaseURL: "https://qn-source-storage-default-rtdb.firebaseio.com/",
+                projectId: "qn-source-storage",
+                storageBucket: "",
+                messagingSenderId: "",
+                appId: ""
+            }
+        };
+
+        let db = null;
+        let todosRef = null;
+        let currentEditingId = null;
+        let tempImageFile = null;
+        let tempImageUrl = null;
+
+        function loadConfig() {
+            const localCloud = localStorage.getItem('cloudConfig');
+            const localFb = localStorage.getItem('firebaseConfig');
+
+            if (localCloud) {
+                const p = JSON.parse(localCloud);
+                GLOBAL_CONFIG.cloudinary = p;
+            }
+            if (localFb) {
+                const p = JSON.parse(localFb);
+                GLOBAL_CONFIG.firebase.apiKey = p.apiKey;
+                GLOBAL_CONFIG.firebase.databaseURL = p.databaseURL;
+            }
+
+            // Auto-fill settings form
+            document.getElementById('cloudNameInput').value = GLOBAL_CONFIG.cloudinary.cloudName;
+            document.getElementById('presetInput').value = GLOBAL_CONFIG.cloudinary.uploadPreset;
+            document.getElementById('fbApiKey').value = GLOBAL_CONFIG.firebase.apiKey;
+            document.getElementById('fbDbUrl').value = GLOBAL_CONFIG.firebase.databaseURL;
+
+            if (GLOBAL_CONFIG.firebase.apiKey && GLOBAL_CONFIG.firebase.databaseURL) {
+                initFirebase();
+            } else {
+                renderEmptyState();
+            }
+        }
+
+        function initFirebase() {
+            try {
+                const app = initializeApp(GLOBAL_CONFIG.firebase);
+                db = getDatabase(app);
+                todosRef = ref(db, 'christmas_todos');
+                
+                onValue(todosRef, (snapshot) => {
+                    const data = snapshot.val();
+                    const list = data ? Object.entries(data).map(([key, val]) => ({ id: key, ...val })) : [];
+                    renderTodos(list);
+                });
+            } catch (e) {
+                showToast('❌ Lỗi kết nối Firebase');
+                console.error(e);
+            }
+        }
+
+        window.saveSettings = function() {
+            const cloudName = document.getElementById('cloudNameInput').value.trim();
+            const preset = document.getElementById('presetInput').value.trim();
+            const apiKey = document.getElementById('fbApiKey').value.trim();
+            const dbUrl = document.getElementById('fbDbUrl').value.trim();
+
+            if(!cloudName || !preset || !apiKey || !dbUrl) {
+                showToast('❌ Vui lòng điền đủ thông tin!');
+                return;
+            }
+
+            localStorage.setItem('cloudConfig', JSON.stringify({ cloudName, uploadPreset: preset }));
+            localStorage.setItem('firebaseConfig', JSON.stringify({ apiKey, databaseURL: dbUrl }));
+            
+            showToast('✅ Đã lưu cấu hình! Đang tải lại...');
+            setTimeout(() => location.reload(), 1000);
+        }
+
+        window.openModal = function(todoId = null) {
+            currentEditingId = todoId;
+            tempImageFile = null;
+            tempImageUrl = null;
+            
+            document.getElementById('titleInput').value = '';
+            document.getElementById('locInput').value = '';
+            document.getElementById('dayInput').value = '';
+            document.getElementById('monthInput').value = '';
+            document.getElementById('yearInput').value = '';
+            document.getElementById('hourInput').value = '';
+            document.getElementById('minuteInput').value = '';
+            document.getElementById('descInput').value = '';
+            document.getElementById('imgInput').value = '';
+            document.getElementById('previewBox').innerHTML = '<span style="color:#aaa">Chưa có ảnh</span>';
+
+            if (todoId && window.todoListCache) {
+                const todo = window.todoListCache.find(t => t.id === todoId);
+                if (todo) {
+                    document.getElementById('titleInput').value = todo.title;
+                    document.getElementById('locInput').value = todo.location;
+                    
+                    if (todo.time) {
+                        const dt = new Date(todo.time);
+                        document.getElementById('dayInput').value = dt.getDate();
+                        document.getElementById('monthInput').value = dt.getMonth() + 1;
+                        document.getElementById('yearInput').value = dt.getFullYear();
+                        document.getElementById('hourInput').value = dt.getHours();
+                        document.getElementById('minuteInput').value = dt.getMinutes();
+                    }
+                    
+                    document.getElementById('descInput').value = todo.desc;
+                    if (todo.image) {
+                        tempImageUrl = todo.image;
+                        document.getElementById('previewBox').innerHTML = `<img src="${todo.image}">`;
+                    }
+                }
+            }
+
+            document.getElementById('todoModal').classList.add('active');
+        }
+
+        window.closeModal = function() {
+            document.getElementById('todoModal').classList.remove('active');
+        }
+
+        window.handleImageSelect = function(input) {
+            if (input.files && input.files[0]) {
+                tempImageFile = input.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewBox').innerHTML = `<img src="${e.target.result}">`;
+                }
+                reader.readAsDataURL(tempImageFile);
+            }
+        }
+
+        async function uploadImage(file) {
+            const { cloudName, uploadPreset } = GLOBAL_CONFIG.cloudinary;
+            if(!cloudName) throw new Error("Chưa cấu hình Cloudinary");
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', uploadPreset);
+
+            const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            if(!res.ok) throw new Error("Lỗi upload ảnh");
+            const data = await res.json();
+            return data.secure_url;
+        }
+
+        window.saveTodo = async function() {
+            const title = document.getElementById('titleInput').value.trim();
+            if (!title) { showToast('❌ Nhập tên kế hoạch nhé!'); return; }
+
+            if (!db) { showToast('⚠️ Chưa kết nối Database!'); return; }
+
+            document.getElementById('loadingOverlay').style.display = 'flex';
+
+            try {
+                let imageUrl = tempImageUrl;
+
+                if (tempImageFile) {
+                    imageUrl = await uploadImage(tempImageFile);
+                }
+
+                // Build datetime from separate inputs
+                const day = document.getElementById('dayInput').value;
+                const month = document.getElementById('monthInput').value;
+                const year = document.getElementById('yearInput').value;
+                const hour = document.getElementById('hourInput').value;
+                const minute = document.getElementById('minuteInput').value;
+
+                let timeValue = '';
+                if (day && month && year) {
+                    const dt = new Date(year, month - 1, day, hour || 0, minute || 0);
+                    timeValue = dt.toISOString();
+                }
+
+                const todoData = {
+                    title: title,
+                    location: document.getElementById('locInput').value,
+                    time: timeValue,
+                    desc: document.getElementById('descInput').value,
+                    image: imageUrl || 'https://cdn-icons-png.flaticon.com/512/3799/3799965.png',
+                    checked: false,
+                    updatedAt: Date.now()
+                };
+
+                if (currentEditingId) {
+                    await update(ref(db, `christmas_todos/${currentEditingId}`), todoData);
+                } else {
+                    await push(todosRef, todoData);
+                }
+
+                window.closeModal();
+                showToast('✅ Đã lưu thành công!');
+            } catch (err) {
+                console.error(err);
+                showToast('❌ Lỗi: ' + err.message);
+            } finally {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }
+        }
+
+        window.deleteTodo = function(id) {
+            if(confirm('Bạn muốn xóa kế hoạch này chứ?')) {
+                remove(ref(db, `christmas_todos/${id}`));
+            }
+        }
+
+        window.toggleCheck = function(id, checked) {
+            update(ref(db, `christmas_todos/${id}`), { checked: checked });
+        }
+
+        function renderTodos(list) {
+            window.todoListCache = list;
+            const container = document.getElementById('todoList');
+            
+            if (list.length === 0) {
+                renderEmptyState();
+                return;
+            }
+
+            list.sort((a,b) => (a.time || '9999') > (b.time || '9999') ? 1 : -1);
+
+            container.innerHTML = list.map(item => {
+                let dateStr = 'Chưa chốt lịch';
+                if (item.time) {
+                    const dt = new Date(item.time);
+                    const d = String(dt.getDate()).padStart(2, '0');
+                    const m = String(dt.getMonth() + 1).padStart(2, '0');
+                    const y = dt.getFullYear();
+                    const h = String(dt.getHours()).padStart(2, '0');
+                    const min = String(dt.getMinutes()).padStart(2, '0');
+                    dateStr = `${d}-${m}-${y} ${h}:${min}`;
+                }
+
+                return `
+                    <div class="todo-item ${item.checked ? 'completed' : ''}">
+                        <input type="checkbox" class="todo-checkbox" 
+                            ${item.checked ? 'checked' : ''} 
+                            onchange="window.toggleCheck('${item.id}', this.checked)">
+                        
+                        <div class="todo-image-wrapper">
+                            <img src="${item.image}" class="todo-image" alt="Image">
+                        </div>
+                        
+                        <div class="todo-content">
+                            <div class="todo-title">${item.title}</div>
+                            <div class="todo-meta">
+                                <span>📍 ${item.location || 'Chưa rõ'}</span>
+                                <span>⏰ ${dateStr}</span>
+                            </div>
+                            ${item.desc ? `<div style="font-size:0.9em; margin-top:5px; color:#ddd; font-style:italic">"${item.desc}"</div>` : ''}
+                        </div>
+
+                        <div class="todo-actions">
+                            <button class="action-btn btn-view" onclick="window.openModal('${item.id}')">✏️</button>
+                            <button class="action-btn btn-delete" onclick="window.deleteTodo('${item.id}')">✕</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderEmptyState() {
+            document.getElementById('todoList').innerHTML = `
+                <div style="text-align:center; padding:50px; opacity:0.7">
+                    <div style="font-size:4em">🎄</div>
+                    <p>Chưa có kế hoạch nào...</p>
+                    <p style="font-size:0.9em; margin-top:10px;">Bấm nút để thêm nhé!</p>
+                </div>
+            `;
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerHTML = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        const canvas = document.getElementById('snowCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize);
+        resize();
+
+        for(let i=0; i<100; i++) particles.push({
+            x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+            r: Math.random()*3+1, s: Math.random()*2+1
+        });
+
+        function drawSnow() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "rgba(255,255,255,0.7)";
+            ctx.beginPath();
+            particles.forEach(p => {
+                ctx.moveTo(p.x, p.y);
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                p.y += p.s; p.x += Math.sin(p.y/50)*0.5;
+                if(p.y > canvas.height) p.y = -10;
+                if(p.x > canvas.width) p.x = 0;
+                if(p.x < 0) p.x = canvas.width;
+            });
+            ctx.fill();
+            requestAnimationFrame(drawSnow);
+        }
+        drawSnow();
+
+        loadConfig();
+    </script>
+    <script>
+      function goTree(){
+        window.location.href = 'tree.html';
+      }
+
+      // Hiện loader khi load trang
+window.addEventListener('load', () => {
+  // Giả lập thời gian load data (Cloudinary / localStorage)
+  setTimeout(() => {
+    document.getElementById('page-loader').classList.add('hide');
+  }, 1800); // chỉnh nhanh/chậm tuỳ ý
+});
+
+window.addEventListener('load', () => {
+    if (sessionStorage.getItem('userInteracted') === 'true') {
+        const audio = document.getElementById('bgMusic');
+        audio.volume = 0.6;
+        audio.play().catch(() => {});
+    }
+});
+
+
+    </script>
+</body>
+</html>

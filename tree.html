@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome Home My Bae</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #0a0a0a;
+        }
+        
+        #main {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #video_url {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Shooting Stars Container */
+        #stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            overflow: hidden;
+        }
+        
+        .shooting-star {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #fff 0%, #00ffff 50%, transparent 100%);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 15px 5px #00ffff,
+                0 0 30px 10px rgba(0, 255, 255, 0.8),
+                0 0 50px 15px rgba(0, 255, 255, 0.5);
+            animation: shooting 2s ease-out forwards;
+        }
+        
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 150px;
+            height: 3px;
+            background: linear-gradient(to left, rgba(0, 255, 255, 1), rgba(0, 200, 255, 0.6), transparent);
+            right: 8px;
+            border-radius: 2px;
+        }
+        
+        .shooting-star::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 250px;
+            height: 1px;
+            background: linear-gradient(to left, rgba(255, 255, 255, 0.8), rgba(0, 255, 255, 0.3), transparent);
+            right: 8px;
+        }
+        
+        @keyframes shooting {
+            0% {
+                transform: translateX(0) translateY(0) rotate(35deg);
+                opacity: 1;
+            }
+            70% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(500px) translateY(400px) rotate(35deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Buttons Container */
+        #buttons-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 320px;
+            padding: 20px;
+            z-index: 20;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        
+        #buttons-container.show {
+            opacity: 1;
+        }
+        
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            pointer-events: auto;
+        }
+        
+        .nav-btn {
+            font-family: 'Poppins', sans-serif;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(135deg, rgba(0, 180, 200, 0.7), rgba(0, 100, 130, 0.8));
+            border: 2px solid rgba(0, 255, 255, 0.6);
+            border-radius: 30px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            animation: fadeInBtn 0.5s ease forwards;
+            opacity: 0;
+            transform: translateX(0);
+            min-width: 180px;
+        }
+        
+        .left-group .nav-btn {
+            animation: slideInLeft 0.6s ease forwards;
+        }
+        
+        .right-group .nav-btn {
+            animation: slideInRight 0.6s ease forwards;
+        }
+        
+        .nav-btn:nth-child(1) { animation-delay: 0.2s; }
+        .nav-btn:nth-child(2) { animation-delay: 0.4s; }
+        .nav-btn:nth-child(3) { animation-delay: 0.6s; }
+        
+        @keyframes slideInLeft {
+            0% {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            0% {
+                opacity: 0;
+                transform: translateX(100px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .nav-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(0, 255, 255, 0.6);
+            background: linear-gradient(135deg, rgba(0, 220, 240, 0.9), rgba(0, 150, 180, 0.9));
+            border-color: #00ffff;
+        }
+        
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+        
+        /* Sparkle effect on buttons */
+        .nav-btn::before {
+            content: '✨';
+            position: absolute;
+            left: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-btn::after {
+            content: '✨';
+            position: absolute;
+            right: 10px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-btn:hover::before,
+        .nav-btn:hover::after {
+            opacity: 1;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            #buttons-container {
+                gap: 220px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            #buttons-container {
+                flex-direction: column;
+                justify-content: flex-end;
+                padding-bottom: 50px;
+                gap: 20px;
+            }
+            
+            .btn-group {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+            }
+            
+            .nav-btn {
+                padding: 12px 20px;
+                font-size: 14px;
+                min-width: 140px;
+            }
+            
+            .left-group .nav-btn,
+            .right-group .nav-btn {
+                animation: fadeInUp 0.6s ease forwards;
+            }
+            
+            @keyframes fadeInUp {
+                0% {
+                    opacity: 0;
+                    transform: translateY(50px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-btn {
+                padding: 10px 15px;
+                font-size: 12px;
+                min-width: 120px;
+            }
+            
+            .btn-group {
+                gap: 8px;
+            }
+        }
+        
+        /* Title - Centered */
+        #title {
+            position: fixed;
+            top: 12%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Great Vibes', cursive;
+            font-size: 60px;
+            color: #00ffff;
+            text-shadow: 
+                0 0 10px rgba(0, 255, 255, 0.8), 
+                0 0 20px rgba(100, 200, 255, 0.6), 
+                0 0 30px rgba(0, 200, 255, 0.4),
+                0 0 40px rgba(0, 255, 255, 0.3);
+            z-index: 25;
+            opacity: 0;
+            white-space: nowrap;
+            letter-spacing: 2px;
+        }
+        
+        #title.show {
+            opacity: 1;
+        }
+        
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            height: 1em;
+            background-color: #00ffff;
+            margin-left: 5px;
+            animation: blink-caret 0.7s step-end infinite;
+            vertical-align: middle;
+            box-shadow: 0 0 10px #00ffff;
+        }
+        
+        .cursor.hidden {
+            display: none;
+        }
+        
+        @keyframes blink-caret {
+            from, to { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            #title {
+                font-size: 42px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            #title {
+                font-size: 32px;
+            }
+        }
+        
+        /* Skip Button */
+        #skip-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-family: 'Poppins', sans-serif;
+            padding: 12px 25px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 25px;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        #skip-btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            border-color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+            transform: scale(1.05);
+        }
+        
+        #skip-btn:active {
+            transform: scale(0.95);
+        }
+        
+        #skip-btn.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+        
+        @media (max-width: 480px) {
+            #skip-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <audio id="bgMusic" src="Không Thời Gian - Dương Domic (Official Visualizer).mp4" loop></audio>
+
+    <div id="main">
+        <video src="1.mp4" id="video_url" muted autoplay playsinline></video>
+    </div>
+    
+    <button id="skip-btn">Skip ⏭️</button>
+    
+    <div id="stars-container"></div>
+    
+    <h1 id="title"><span id="typed-text"></span><span class="cursor">|</span></h1>
+    
+    <div id="buttons-container">
+        <div class="btn-group left-group">
+            <a href="index ver1.1.html" class="nav-btn">🎮 Mini Game</a>
+            <a href="aboutus.html" class="nav-btn">👥 About Us</a>
+        </div>
+        <div class="btn-group right-group">
+            <a href="album.html" class="nav-btn">📸 Our Album</a>
+            <a href="todo.html" class="nav-btn">📋 Our Plan</a>
+            <a href="letter.html" class="nav-btn">💌 My Heartfelt Message</a>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+// áp dụng cho mọi nút chuyển trang
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    sessionStorage.setItem('userInteracted', 'true');
+  });
+});
+
+
+     window.addEventListener('load', () => {
+    if (sessionStorage.getItem('userInteracted') === 'true') {
+        const audio = document.getElementById('bgMusic');
+        audio.volume = 0.6;
+        audio.play().catch(() => {});
+    }
+});
+
+        const video = document.getElementById("video_url");
+        const starsContainer = document.getElementById("stars-container");
+        const buttonsContainer = document.getElementById("buttons-container");
+        const title = document.getElementById("title");
+        const typedText = document.getElementById("typed-text");
+        const cursor = document.querySelector(".cursor");
+        const skipBtn = document.getElementById("skip-btn");
+        
+        const textToType = "Welcome home my bae";
+        let charIndex = 0;
+        let hasSkipped = false;
+        
+        // Typewriter effect - type each character
+        function typeWriter() {
+            if (charIndex < textToType.length) {
+                typedText.textContent += textToType.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 100); // Speed: 100ms per character
+            } else {
+                // Hide cursor after typing is done
+                setTimeout(() => {
+                    cursor.classList.add("hidden");
+                }, 1500);
+            }
+        }
+        
+        // Create shooting star
+        function createShootingStar() {
+            const star = document.createElement("div");
+            star.className = "shooting-star";
+            
+            // Random starting position (top-left area of screen)
+            star.style.left = Math.random() * 80 + "%";
+            star.style.top = Math.random() * 40 + "%";
+            
+            // Random size variation
+            const size = 6 + Math.random() * 6;
+            star.style.width = size + "px";
+            star.style.height = size + "px";
+            
+            // Random animation duration
+            const duration = 1.5 + Math.random() * 1.5;
+            star.style.animationDuration = duration + "s";
+            
+            starsContainer.appendChild(star);
+            
+            // Remove star after animation
+            setTimeout(() => {
+                star.remove();
+            }, duration * 1000);
+        }
+        
+        // Create multiple shooting stars
+        function startShootingStars() {
+            // Initial burst of stars
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    createShootingStar();
+                }, i * 200);
+            }
+            
+            // Continue creating stars periodically
+            setInterval(() => {
+                if (Math.random() > 0.3) {
+                    createShootingStar();
+                }
+            }, 400);
+        }
+        
+        // Function to show all effects and buttons
+        function showContent() {
+            if (hasSkipped) return; // Prevent running twice
+            hasSkipped = true;
+            
+            // Hide skip button
+            skipBtn.classList.add("hidden");
+            
+            // Pause video at current frame
+            video.pause();
+            
+            // Start shooting stars effect
+            startShootingStars();
+            
+            // Show title and start typing effect
+            setTimeout(() => {
+                title.classList.add("show");
+                typeWriter();
+            }, 500);
+            
+            // Show buttons after a short delay
+            setTimeout(() => {
+                buttonsContainer.classList.add("show");
+            }, 1000);
+        }
+        
+        // Skip button click
+        skipBtn.addEventListener("click", function() {
+            // Jump to end of video
+            video.currentTime = video.duration;
+            showContent();
+        });
+        
+        // When video ends
+        video.addEventListener("ended", function() {
+            showContent();
+        });
+        
+        // Fallback: If video is very short or already loaded
+        video.addEventListener("loadedmetadata", function() {
+            console.log("Video duration: " + video.duration + " seconds");
+        });
+        
+        // Handle video error
+        video.addEventListener("error", function() {
+            console.log("Video error - showing buttons anyway");
+            skipBtn.classList.add("hidden");
+            startShootingStars();
+            title.classList.add("show");
+            typeWriter();
+            buttonsContainer.classList.add("show");
+        });
+    </script>
+</body>
+</html>

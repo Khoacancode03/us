@@ -1,0 +1,2411 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khuất Như Khoa - Life Path</title>
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --dark-bg: #0a0a0a;
+            --card-bg: #ffffff;
+            --text-dark: #1a1a1a;
+            --text-light: #e0e0e0;
+            --accent: #d4a373;
+            --accent-light: #e8c4a0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- STARRY BACKGROUND (Nền sao lấp lánh) --- */
+
+/* 1. Khung chứa sao: Ghim cố định toàn màn hình, nằm dưới cùng */
+#star-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200%;
+    height: 200%;
+    z-index: -1; /* Nằm sau tất cả nội dung */
+    pointer-events: none; /* Không chặn click chuột */
+    overflow: hidden;
+}
+
+/* 2. Ngôi sao đơn lẻ */
+.star {
+    position: absolute;
+    border-radius: 50%;
+    background: white;
+    opacity: 0;
+    animation: twinkle var(--duration) ease-in-out infinite;
+    animation-delay: var(--delay);
+}
+
+/* 3. Hiệu ứng lấp lánh (Twinkle) */
+@keyframes twinkle {
+    0% { opacity: 0; transform: scale(0.5); box-shadow: 0 0 0 transparent; }
+    50% { opacity: 0.8; transform: scale(1.2); box-shadow: 0 0 6px rgba(255, 255, 255, 0.8); }
+    100% { opacity: 0; transform: scale(0.5); box-shadow: 0 0 0 transparent; }
+}
+
+
+section:not(.hero) {
+    position: relative;
+    z-index: auto;
+}
+
+        /* Header */
+        /* header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(212, 163, 115, 0.2);
+        }
+
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        } */
+
+/* --- PLANET NAVIGATION (REALISTIC & ACTIVE STATE) --- */
+
+.planet-nav {
+    position: fixed;
+    top: 50%;
+    right: 5px;
+    transform: translateY(-50%);
+    z-index: 50;
+    padding: 10px 5px;
+    background: rgba(0, 0, 0, 0.1); /* Nền siêu mờ */
+    border-radius: 15px 0 0 15px;
+    backdrop-filter: blur(2px);
+}
+
+.planet-nav .nav-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.planet-link {
+    text-decoration: none;
+    display: grid;
+    grid-template-columns: auto 60px;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.3s ease;
+}
+
+/* Label (Chữ) */
+.label {
+    color: #a0a0a0; /* Màu xám khi chưa active */
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-align: right;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    transition: all 0.3s ease;
+}
+
+/* Container Hành tinh */
+.planet-link .planet {
+    justify-self: center;
+    border-radius: 50%;
+    position: relative;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Bóng đổ trong tạo khối cầu 3D chung */
+    box-shadow: inset -6px -6px 12px rgba(0,0,0,0.8), inset 2px 2px 5px rgba(255,255,255,0.2);
+    z-index: 2;
+    cursor: pointer;
+}
+
+/* --- 🎨 VẼ HÀNH TINH CHI TIẾT (REALISTIC CSS ART) --- */
+
+/* 1. Sao Thủy (Mercury): Xám, sần sùi lỗ chỗ */
+.planet-mercury {
+    width: 28px; height: 28px;
+    background-color: #b0b0b0;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(0,0,0,0.1) 0%, transparent 20%),
+        radial-gradient(circle at 60% 70%, rgba(0,0,0,0.15) 0%, transparent 15%),
+        radial-gradient(circle at 80% 30%, rgba(255,255,255,0.2) 0%, transparent 10%);
+}
+
+/* 2. Sao Kim (Venus): Vàng cam, mây dày đặc, bề mặt nóng */
+.planet-venus {
+    width: 32px; height: 32px;
+    background: radial-gradient(circle at 30% 30%, #ffdbac, #e6ac5c 40%, #bf8040 100%);
+}
+
+/* 3. Sao Hỏa (Mars): Đỏ đất nung, có chỏm băng ở cực */
+.planet-mars {
+    width: 30px; height: 30px;
+    background: radial-gradient(circle at 30% 30%, #ff7e5f, #c0392b);
+    overflow: hidden;
+}
+/* Chỏm băng cực bắc */
+.planet-mars::after {
+    content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 12px; height: 4px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    filter: blur(1px);
+}
+
+/* 4. Sao Mộc (Jupiter): Sọc ngang đặc trưng + Đốm đỏ lớn */
+.planet-jupiter {
+    width: 50px; height: 50px;
+    background: 
+        repeating-linear-gradient(
+            -15deg,
+            #d4a373 0px, #d4a373 6px, /* Màu sáng */
+            #a1887f 6px, #a1887f 10px, /* Màu nâu nhạt */
+            #5d4037 10px, #5d4037 12px  /* Màu nâu đậm */
+        );
+    box-shadow: inset -10px -10px 25px rgba(0,0,0,0.8);
+}
+/* Đốm đỏ lớn (Great Red Spot) */
+.planet-jupiter::after {
+    content: ''; position: absolute; top: 60%; left: 30%;
+    width: 12px; height: 8px;
+    background: #8d4030;
+    border-radius: 50%;
+    box-shadow: inset 2px 2px 2px rgba(0,0,0,0.4);
+    opacity: 0.8;
+}
+
+/* 5. Sao Thổ (Saturn): Vàng nhạt + Vành đai chi tiết */
+.planet-saturn {
+    width: 38px; height: 38px;
+    background: radial-gradient(circle at 40% 40%, #fceabb, #c6a664);
+}
+.planet-saturn::before {
+    content: ''; position: absolute; width: 170%; height: 50%;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) rotate(-20deg);
+    border-radius: 50%;
+    /* Tạo vành đai nhiều lớp bằng box-shadow */
+    box-shadow: 
+        0 0 0 3px rgba(198, 166, 100, 0.2), /* Vành trong mờ */
+        0 0 0 6px rgba(198, 166, 100, 0.6), /* Vành chính */
+        0 0 0 7px rgba(100, 80, 50, 0.3); /* Khe hở Cassini giả lập */
+    z-index: -1;
+}
+
+/* 6. Sao Thiên Vương (Uranus): Xanh ngọc lam nhạt, trơn */
+.planet-uranus {
+    width: 34px; height: 34px;
+    background: radial-gradient(circle at 30% 30%, #dcedc8, #4dd0e1);
+}
+
+/* 7. Sao Hải Vương (Neptune): Xanh dương đậm, có bão tối */
+.planet-neptune {
+    width: 34px; height: 34px;
+    background: radial-gradient(circle at 30% 30%, #64b5f6, #1565c0);
+}
+/* Vết tối lớn */
+.planet-neptune::after {
+    content: ''; position: absolute; top: 40%; right: 20%;
+    width: 8px; height: 4px;
+    background: #0d47a1;
+    border-radius: 50%;
+    filter: blur(1px);
+}
+
+
+/* --- ACTIVE & HOVER STATE LOGIC --- */
+
+/* Định nghĩa trạng thái "Sáng đèn" (Active hoặc Hover) */
+.planet-link:hover .label,
+.planet-link.active .label {
+    color: var(--accent); /* Chữ chuyển màu cam */
+    text-shadow: 0 0 8px var(--accent); /* Chữ phát sáng */
+    transform: translateX(-3px);
+}
+
+.planet-link:hover .planet,
+.planet-link.active .planet {
+    transform: scale(1.25) rotate(10deg); /* Phóng to */
+}
+
+/* Hiệu ứng hào quang (Glow) riêng khi Active/Hover */
+.planet-link.active .planet-mercury, .planet-link:hover .planet-mercury { box-shadow: 0 0 20px rgba(255, 255, 255, 0.6); }
+.planet-link.active .planet-venus,   .planet-link:hover .planet-venus   { box-shadow: 0 0 25px rgba(255, 219, 172, 0.6); }
+.planet-link.active .planet-mars,    .planet-link:hover .planet-mars    { box-shadow: 0 0 25px rgba(255, 107, 107, 0.7); }
+.planet-link.active .planet-jupiter, .planet-link:hover .planet-jupiter { box-shadow: 0 0 35px rgba(212, 163, 115, 0.7); }
+.planet-link.active .planet-saturn,  .planet-link:hover .planet-saturn  { box-shadow: 0 0 30px rgba(244, 228, 188, 0.6); }
+.planet-link.active .planet-uranus,  .planet-link:hover .planet-uranus  { box-shadow: 0 0 25px rgba(77, 208, 225, 0.7); }
+.planet-link.active .planet-neptune, .planet-link:hover .planet-neptune { box-shadow: 0 0 30px rgba(21, 101, 192, 0.8); }
+
+
+/* Dây nối trục vũ trụ */
+.planet-nav::before {
+    content: ''; position: absolute; top: 20px; bottom: 20px; right: 35px; 
+    width: 1px; background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.1), transparent); z-index: -1;
+}
+/* Responsive: Ẩn trên mobile */
+@media (max-width: 768px) {
+    .planet-nav { display: none; }
+}
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Music Player */
+        .music-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            background: var(--accent);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(212, 163, 115, 0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(212, 163, 115, 0.6);
+        }
+
+        .music-control svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+
+        /* --- 1. NOISE TEXTURE (Hiệu ứng nhiễu hạt) --- */
+.noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; 
+    z-index: 9999;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* --- 2. PARTICLE CANVAS & HERO SETUP --- */
+.hero {
+    position: relative;
+    z-index: 2;
+    background: var(--dark-bg); 
+    min-height: 100vh;
+    display: flex;
+}
+
+#particleCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Nằm dưới nội dung chữ */
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2; /* Nội dung phải nổi lên trên hạt */
+}
+
+/* --- 3. GREETING TEXT --- */
+.greeting-text {
+    font-family: 'Consolas', 'Monaco', monospace; /* Font code */
+    color: var(--accent);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    opacity: 0; /* Ẩn mặc định để JS hiện dần lên */
+    animation: fadeInGreeting 1s ease forwards;
+}
+
+.greeting-text::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--accent);
+}
+
+@keyframes fadeInGreeting {
+    to { opacity: 1; }
+}
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(212, 163, 115, 0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-text h1 {
+            font-size: 3.5rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero-text .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .hero-text .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .info-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .info-item label {
+            font-size: 0.85rem;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-item span {
+            font-size: 1.1rem;
+            color: var(--text-light);
+        }
+
+        .tagline {
+            font-style: italic;
+            font-size: 1.1rem;
+            color: var(--accent-light);
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(212, 163, 115, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .hero-image {
+            position: relative;
+        }
+
+        .image-placeholder {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: linear-gradient(135deg, rgba(212, 163, 115, 0.2) 0%, rgba(212, 163, 115, 0.05) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--accent);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Section Styling */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: var(--accent);
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--accent);
+        }
+
+        /* Career Section - Split Layout */
+        .career-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 3rem;
+        }
+
+        .card {
+            position: relative;
+            z-index: 10;
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            color: var(--text-dark);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(212, 163, 115, 0.3);
+            z-index: 2000;
+        }
+
+        .card h3 {
+            color: var(--accent);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card p {
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        .card strong {
+            color: var(--accent);
+        }
+
+        .achievements-list {
+            list-style: none;
+            padding: 0;
+             z-index: 1;
+        }
+
+        /* .achievements-list li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(212, 163, 115, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        } */
+
+        .achievements-list li {
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(212, 163, 115, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative; /* Để làm điểm tựa cho ảnh bay */
+    cursor: pointer;
+    transition: color 0.3s, padding-left 0.3s;
+     z-index: 10001;
+}
+
+.achievements-list li:hover {
+    color: var(--accent);
+    padding-left: 10px; 
+}
+        .achievements-list li:last-child {
+            border-bottom: none;
+        }
+
+        .achievements-list li::before {
+            content: '✓';
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+.cloud-popup {
+    position: absolute;
+    
+    left: 180px; 
+    top: -90px;  /* Đẩy lên trên để ảnh nằm giữa dòng theo chiều dọc */
+    right: auto; /* Bỏ căn lề phải cũ */
+    
+    width: 350px;
+    height: 220px;
+    
+    border-radius: 12px;
+    
+    overflow: hidden;
+    box-shadow: 10px 20px 50px rgba(0, 0, 0, 0.5);
+    border: 4px solid #fff;
+    background: #1a1a1a;
+    z-index: 10002;
+    
+    /* Trạng thái ẩn */
+    opacity: 0;
+    visibility: hidden;
+    
+    /* Hiệu ứng xuất hiện: Trượt từ trái sang phải nhẹ */
+    transform: translateX(-20px) scale(0.9);
+    transform-origin: center left; /* Phóng to từ phía bên trái */
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+}
+
+.cloud-popup img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- TRẠNG THÁI HOVER --- */
+.achievements-list li:hover .cloud-popup {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0) scale(1); 
+    z-index: 10002;
+}
+
+/* Responsive: Ẩn trên mobile */
+@media (max-width: 1024px) {
+    .cloud-popup {
+        display: none !important;
+    }
+}
+
+        /* Free Time Section - Image Grid */
+        .freetime-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .freetime-item {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .freetime-item:hover {
+            transform: translateY(-10px);
+        }
+
+        .freetime-item .image-box {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, rgba(212, 163, 115, 0.3) 0%, rgba(212, 163, 115, 0.1) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+
+        .freetime-item .text {
+            padding: 1.5rem;
+            color: var(--text-dark);
+            text-align: center;
+            font-weight: 500;
+        }
+        
+
+        /* --- FREE TIME SECTION: Expanding Cards --- */
+/* --- FREE TIME SECTION: Expanding Cards --- */
+#freetime {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.freetime-container {
+    display: flex;
+    width: 100%;
+    height: 450px;
+    gap: 1rem;
+    padding: 0 1rem;
+}
+
+/* Thiết lập thẻ panel chung */
+.ft-panel {
+    /* Cấu hình ảnh nền */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    
+    height: 100%;
+    border-radius: 30px;
+    color: #fff;
+    cursor: pointer;
+    flex: 0.5; /* Trạng thái đóng */
+    margin: 10px;
+    position: relative; 
+    transition: flex 0.7s cubic-bezier(0.05, 0.6, 0.4, 0.9);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+/* Lớp phủ màu (Overlay Mask) - Nằm đè lên ảnh */
+.ft-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1; /* Lớp màu nằm trên ảnh nền */
+    transition: opacity 0.5s ease;
+    opacity: 0.85; /* Độ đậm của màu che (0.85 là che gần hết) */
+}
+
+/* --- CẤU HÌNH ẢNH VÀ MÀU RIÊNG CHO TỪNG THẺ --- */
+
+/* 1. Ngoại ngữ */
+.ft-panel:nth-child(1) { 
+    background-image: url('nn.jpg'); 
+}
+.ft-panel:nth-child(1)::before { 
+    background: linear-gradient(135deg, #1a1a1a, #2c3e50); /* Màu lớp phủ */
+}
+
+/* 2. Coding */
+.ft-panel:nth-child(2) { 
+    background-image: url('code.jpg'); 
+}
+.ft-panel:nth-child(2)::before { 
+    background: linear-gradient(135deg, #1a1a1a, #d4a373); 
+}
+
+/* 3. Piano/Nghệ thuật */
+.ft-panel:nth-child(3) { 
+    background-image: url('dulich.jpg'); 
+}
+.ft-panel:nth-child(3)::before { 
+    background: linear-gradient(135deg, #1a1a1a, #5D4037); 
+}
+
+/* 4. Thiên nhiên/Đi dạo */
+.ft-panel:nth-child(4) { 
+    background-image: url('cảnh.jpg'); 
+}
+.ft-panel:nth-child(4)::before { 
+    background: linear-gradient(135deg, #1a1a1a, #2E7D32); 
+}
+
+/* 5. Sách/Self-growth */
+.ft-panel:nth-child(5) { 
+    background-image: url('thinking.jpg'); 
+}
+.ft-panel:nth-child(5)::before { 
+    background: linear-gradient(135deg, #1a1a1a, #455A64); 
+}
+
+
+/* --- HIỆU ỨNG HOVER --- */
+
+/* Khi di chuột vào: Mở rộng thẻ + Làm mờ lớp màu đi để lộ ảnh */
+.ft-panel:hover {
+    flex: 3; 
+    border-color: var(--accent);
+}
+
+.ft-panel:hover::before {
+    opacity: 0.3; /* Giảm độ che để nhìn thấy ảnh rõ hơn */
+}
+
+.ft-panel:hover .ft-content {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.ft-panel:hover h3 {
+    opacity: 1; /* Đảm bảo tiêu đề hiện rõ */
+}
+
+
+/* --- CÁC THÀNH PHẦN BÊN TRONG (TEXT, ICON) --- */
+
+/* Icon tròn */
+.ft-icon {
+    position: absolute;
+    top: 20px; left: 20px;
+    font-size: 2rem;
+    background: rgba(0,0,0,0.6); 
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--accent);
+    backdrop-filter: blur(5px);
+    z-index: 2; /* Nằm trên lớp màu */
+}
+
+/* Tiêu đề H3 */
+.ft-panel h3 {
+    font-size: 1.5rem;
+    position: absolute;
+    bottom: 20px; left: 20px;
+    margin: 0;
+    white-space: nowrap;
+    transition: all 0.3s;
+    z-index: 2; /* Nằm trên lớp màu */
+    text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+}
+
+/* Nội dung mô tả (chỉ hiện khi hover) */
+.ft-content {
+    position: absolute;
+    bottom: 70px; left: 20px; right: 20px;
+    opacity: 0; /* Ẩn mặc định */
+    transform: translateY(20px);
+    transition: opacity 0.4s ease-in 0.2s, transform 0.4s ease-in 0.2s;
+    background: rgba(0,0,0,0.75); 
+    backdrop-filter: blur(10px);
+    padding: 15px;
+    border-radius: 15px;
+    border-left: 3px solid var(--accent);
+    z-index: 2; /* Nằm trên lớp màu */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .freetime-container {
+        flex-direction: column;
+        height: 700px;
+    }
+    .ft-panel:hover { flex: 2; }
+}
+
+/* --- PERSONALITY SECTION: Floating Glass Cards --- */
+.personality-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    perspective: 1000px; /* Tạo chiều sâu 3D */
+}
+
+.per-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 20px;
+    position: relative;
+    transition: transform 0.4s ease, box-shadow 0.4s ease, background 0.4s;
+    overflow: hidden;
+}
+
+.per-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: scaleX(0);
+    transition: transform 0.4s;
+}
+
+.per-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    background: rgba(255, 255, 255, 0.07);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(212, 163, 115, 0.2);
+}
+
+.per-card:hover::before {
+    transform: scaleX(1);
+}
+
+.per-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    filter: drop-shadow(0 0 10px rgba(212, 163, 115, 0.3));
+}
+
+.per-title {
+    color: var(--accent);
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.per-desc {
+    font-size: 0.95rem;
+    color: #ccc;
+    line-height: 1.6;
+}
+
+/* Hiệu ứng nền noise hoặc hạt cho Personality */
+#personality {
+    background-image: radial-gradient(rgba(212, 163, 115, 0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+/* --- GALLERY SECTION: Bento Grid --- */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 200px;
+    gap: 1.5rem;
+}
+
+.bento-item {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.1);
+    /* Placeholder gradient */
+    background: linear-gradient(135deg, #232526 0%, #414345 100%);
+}
+
+.bento-item:hover {
+    transform: scale(0.98);
+    border-color: var(--accent);
+}
+
+/* Các class định hình kích thước ô (Bento Style) */
+.span-2-col { grid-column: span 2; }
+.span-2-row { grid-row: span 2; }
+
+.bento-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.5s;
+}
+
+.bento-item:hover .bento-content {
+    transform: scale(1.1);
+}
+
+.bento-icon {
+    font-size: 3rem;
+    color: var(--accent);
+    margin-bottom: 10px;
+}
+
+.bento-label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    color: var(--text-light);
+    font-weight: 600;
+    transform: translateY(100%);
+    transition: transform 0.3s;
+}
+
+.bento-item:hover .bento-label {
+    transform: translateY(0);
+}
+
+/* Responsive cho Gallery */
+@media (max-width: 768px) {
+    .bento-grid {
+        grid-template-columns: 1fr;
+        grid-auto-rows: 250px;
+    }
+    .span-2-col, .span-2-row {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+}
+
+/* Modal Lightbox */
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal-content {
+    max-width: 80%;
+    max-height: 80%;
+    text-align: center;
+}
+
+.modal-icon {
+    font-size: 8rem;
+    color: var(--accent);
+    animation: float 3s ease-in-out infinite;
+}
+
+.modal-text {
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.close-modal {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+
+        /* Personality Section */
+        .personality-content {
+            background: var(--card-bg);
+            padding: 3rem;
+            border-radius: 20px;
+            color: var(--text-dark);
+        }
+
+        .personality-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .personality-item {
+            padding: 1.5rem;
+            background: rgba(212, 163, 115, 0.1);
+            border-radius: 10px;
+            border-left: 4px solid var(--accent);
+        }
+
+        /* Becoming Section - Image + Text */
+        .becoming-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .becoming-image {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: linear-gradient(135deg, rgba(212, 163, 115, 0.3) 0%, rgba(212, 163, 115, 0.1) 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: var(--accent);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .becoming-content {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            color: var(--text-dark);
+        }
+
+        .becoming-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .becoming-content li {
+            padding: 0.8rem 0;
+            padding-left: 2rem;
+            position: relative;
+        }
+
+        .becoming-content li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        /* --- BECOMING SECTION: Core Value Grid --- */
+.becoming-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.goal-card {
+    background: linear-gradient(145deg, #1e1e1e, #141414);
+    border-radius: 20px;
+    padding: 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hiệu ứng hover nhẹ nhàng */
+.goal-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Thanh line trang trí bên trái */
+.goal-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 4px;
+    background: var(--accent);
+    opacity: 0.5;
+    transition: width 0.3s;
+}
+
+.goal-card:hover::before {
+    width: 6px;
+    opacity: 1;
+}
+
+.goal-icon {
+    font-size: 2.5rem;
+    background: rgba(212, 163, 115, 0.1);
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0; /* Không bị co lại */
+}
+
+.goal-content h3 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+}
+
+.goal-content p {
+    font-size: 0.95rem;
+    color: #ccc;
+    line-height: 1.5;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .becoming-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+        /* Moments Section */
+        /* Moments Section */
+.moments-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.moment-card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.moment-card .image-box {
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    background: #ddd; /* fallback nếu ảnh không load */
+}
+
+.moment-card .image-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.moment-card .text {
+    padding: 2rem;
+    color: var(--text-dark);
+    font-style: italic;
+}
+
+
+        .image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* hoặc contain */
+    border-radius: 20px;
+}
+
+
+        /* Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+
+        .gallery-item {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, rgba(212, 163, 115, 0.3) 0%, rgba(212, 163, 115, 0.1) 100%);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--accent);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-item .label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.8);
+            color: var(--text-light);
+            padding: 0.8rem;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-content,
+            .career-grid,
+            .becoming-grid,
+            .moments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .freetime-grid,
+            .personality-grid,
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.85rem;
+            }
+
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+        }
+            /* --- COSMOS FOOTER --- */
+        .cosmos-footer {
+            position: relative;
+            padding: 4rem 2rem 2rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4));
+            backdrop-filter: blur(5px); /* Làm mờ sao phía sau */
+            text-align: center;
+            overflow: hidden;
+            border-top: 1px solid rgba(212, 163, 115, 0.1);
+            margin-top: 4rem;
+        }
+
+/* Chữ ký Neon */
+.neon-signature {
+    font-family: 'Great Vibes', cursive; /* Font viết tay */
+    font-size: 4rem;
+    color: #fff;
+    margin-bottom: 1rem;
+    
+    /* Hiệu ứng Neon Gold/Orange (Theo màu accent của web) */
+    text-shadow: 
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px var(--accent),
+        0 0 40px var(--accent),
+        0 0 80px var(--accent);
+    
+    animation: neonPulse 3s infinite alternate;
+}
+
+@keyframes neonPulse {
+    from { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--accent), 0 0 40px var(--accent); }
+    to { text-shadow: 0 0 2px #fff, 0 0 5px #fff, 0 0 15px var(--accent), 0 0 30px var(--accent); }
+}
+
+/* Thông điệp */
+.footer-msg {
+    font-size: 1rem;
+    color: #a0a0a0;
+    font-style: italic;
+    margin-bottom: 2rem;
+    letter-spacing: 0.5px;
+}
+
+.copyright {
+    font-size: 0.8rem;
+    color: #555;
+    margin-top: 2rem;
+}
+
+/* --- ROCKET LAUNCHER (Nút Scroll Top) --- */
+.rocket-launcher {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition: transform 0.3s;
+    z-index: 100;
+    filter: drop-shadow(0 0 10px rgba(212, 163, 115, 0.5));
+}
+
+.rocket-launcher:hover {
+    transform: translateY(-5px); /* Nhấp nhổm muốn bay */
+}
+
+/* Lửa đuôi tên lửa (Mặc định ẩn, chỉ hiện khi bay) */
+.rocket-fire {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%) rotate(180deg);
+    font-size: 1.5rem;
+    opacity: 0; 
+    transition: opacity 0.3s;
+}
+
+/* Class kích hoạt bay */
+.rocket-launcher.launching {
+    animation: flyToSpace 1.5s ease-in forwards;
+}
+
+.rocket-launcher.launching .rocket-fire {
+    opacity: 1; /* Phụt lửa */
+}
+
+/* Animation bay vút lên trời */
+@keyframes flyToSpace {
+    0% { transform: translateY(0) scale(1); }
+    10% { transform: translateY(20px) scale(0.9); } /* Lùi lại lấy đà */
+    40% { transform: translateY(-50px) scale(1.1); }
+    100% { transform: translateY(-150vh) scale(0.5); opacity: 0; } /* Bay mất hút */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .neon-signature { font-size: 3rem; }
+    .rocket-launcher { right: 20px; bottom: 20px; font-size: 2rem; }
+}
+        .nav-btn{
+  position:fixed;
+  top:20px;
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.4rem;
+  cursor:pointer;
+  z-index:999;
+  transition:.35s ease;
+  box-shadow:0 8px 25px rgba(0,0,0,.4);
+}
+
+.nav-btn:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 20px rgba(248,178,41,.8);
+}
+
+.nav-left{left:20px}
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="nav-btn nav-right" onclick="goKhoa()">
+  ⬅
+</div>
+        <div id="star-container"></div>
+
+
+    <!-- Planet Navigation (Vertical Right) -->
+<nav class="planet-nav">
+    <ul class="nav-links">
+        <!-- 1. Home - Mercury (Sao Thủy) -->
+        <li>
+            <a href="#home" class="planet-link">
+                <span class="label">Intro</span>
+                <div class="planet planet-mercury"></div>
+            </a>
+        </li>
+
+        <!-- 2. Career - Venus (Sao Kim) -->
+        <li>
+            <a href="#career" class="planet-link">
+                <span class="label">Career</span>
+                <div class="planet planet-venus"></div>
+            </a>
+        </li>
+
+        <!-- 3. Free Time - Earth (Thay bằng Sao Hỏa cho đúng list 7 cái bạn yêu cầu) -->
+        <li>
+            <a href="#freetime" class="planet-link">
+                <span class="label">Free Time</span>
+                <div class="planet planet-mars"></div>
+            </a>
+        </li>
+
+        <!-- 4. Personality - Jupiter (Sao Mộc - To nhất) -->
+        <li>
+            <a href="#personality" class="planet-link">
+                <span class="label">Personality</span>
+                <div class="planet planet-jupiter"></div>
+            </a>
+        </li>
+
+        <!-- 5. Becoming - Saturn (Sao Thổ - Có vành đai) -->
+        <li>
+            <a href="#becoming" class="planet-link">
+                <span class="label">Becoming</span>
+                <div class="planet planet-saturn"></div>
+            </a>
+        </li>
+
+        <!-- 6. Moments - Uranus (Sao Thiên Vương) -->
+        <li>
+            <a href="#moments" class="planet-link">
+                <span class="label">Moments</span>
+                <div class="planet planet-uranus"></div>
+            </a>
+        </li>
+
+        <!-- 7. Gallery - Neptune (Sao Hải Vương) -->
+        <li>
+            <a href="#gallery" class="planet-link">
+                <span class="label">Gallery</span>
+                <div class="planet planet-neptune"></div>
+            </a>
+        </li>
+    </ul>
+</nav>
+    <!-- Music Control -->
+    <div class="music-control" id="musicControl">
+        <svg viewBox="0 0 24 24" id="playIcon">
+            <path d="M8 5v14l11-7z"/>
+        </svg>
+        <svg viewBox="0 0 24 24" id="pauseIcon" style="display:none;">
+            <path d="M6 4h4v16H6zM14 4h4v16h-4z"/>
+        </svg>
+    </div>
+    <audio id="bgMusic" loop>
+        <source src="Không Thời Gian - Dương Domic (Official Visualizer).mp4" type="audio/mpeg">
+    </audio>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        
+        <canvas id="particleCanvas"></canvas>
+
+        <div class="hero-content">
+            <div class="hero-text">
+                <div id="greeting" class="greeting-text"></div>
+
+                <h1>Khuất Như Khoa</h1> 
+                
+                <div class="tagline">
+                    Chào cậu, cảm ơn cậu đã dành thời gian lướt qua đâyy. Đây sẽ là vài nét về cuộc sống, tam quan, sở thích cũng như 1 số khoảnh khắc của tớ!
+                </div>               
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>Ngày sinh</label>
+                        <span>06/12/2003</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Cung</label>
+                        <span>Nhân Mã</span>
+                    </div>
+                    <div class="info-item">
+                        <label>MBTI</label>
+                        <span>INTJ</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Nơi ở</label>
+                        <span>1. Hòa Lạc, Hà Nội <br></span>
+                        <span>2. Cầu Giấy, Hà Nội</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Chiều cao - Cân nặng</label>
+                        <span>1m7 - 55kg</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Social Media</label>
+                        <span><a href="https://www.facebook.com/nhukhoa0612">Như Khoa</a></span>
+                    </div>
+                    
+                  
+                </div>
+
+
+            </div>
+
+            <div class="hero-image">
+                <div class="image-placeholder">
+                    <img src="hoa.jpg" alt="">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Career Section -->
+    <section id="career">
+        <h2 class="section-title">Career</h2>
+        <div class="career-grid">
+            <div class="card">
+                <h3>Học Tập & Công Việc</h3>
+                <p><strong>Đã từng:<br></strong> 
+                    - Làm phụ bếp, chân chạy bàn cho 1 quán ăn nhỏ của gia đình. (Hồi đấy học cấp 2, cấp 3 trưa về chạy bàn, tối về dọn dẹp mệt mỏi vô cùng, nhưng giờ đấy lại là quãng thời gian tớ mong muốn quay lại nhất :(     ) <br>
+                    - Học chuyên ngành Software Engineering – Đại học FPT </p>
+                <p><strong>Hiện tại:</strong> Developer – FPT Software</p>
+                <p><strong>Định hướng:</strong> Hybrid: Senior Developer + Korean Bridge Software Engineer</p>
+                <p>Trở thành người có thể đứng giữa công nghệ kỹ thuật – con người – ngôn ngữ. Về câu chuyện theo đuổi kĩ sư cầu nối, đơn giản vì thích IT và cũng muốn làm cái gì đó có ý nghĩa hơn cho người Việt. Làm dev thì vui, nhưng làm cầu nối thì mình còn được đứng giữa công nghệ – ngôn ngữ – con người, giúp hai bên hiểu nhau và cùng tạo ra sản phẩm tốt hơn.
+
+Mình muốn sau này những thứ do người Việt làm ra có thể đi xa, không bị chặn lại chỉ vì khác ngôn ngữ hay cách làm việc. Nếu mình có thể góp một phần nhỏ để trí tuệ Việt Nam bước ra thế giới rõ ràng hơn, tự tin hơn, thì đó là điều mình muốn theo đuổi.</p>
+            </div>
+
+            <div class="card">
+    <h3>Tớ có ...</h3>
+    <ul class="achievements-list">
+        <li>
+            TOPIK 4
+            <!-- Ảnh đám mây -->
+            <div class="cloud-popup">
+                <img src="topik.png" alt="TOPIK">
+            </div>
+        </li>
+        <li>
+            TOEIC 925
+            <div class="cloud-popup">
+                <img src="toeic.png" alt="TOEIC">
+            </div>
+        </li>
+        <li>
+            GPA 8.6/10
+            <div class="cloud-popup">
+                <img src="bangdh.jpg" alt="GPA">
+            </div>
+        </li>
+        <li>
+            Học bổng FPT Academy
+            <div class="cloud-popup">
+                <img src="fsa.jpg" alt="FPT">
+            </div>
+        </li>
+        <li>
+            Học bổng Techcombank
+            <div class="cloud-popup">
+                <img src="cacban.jpg" alt="TCB">
+            </div>
+        </li>
+    </ul>
+</div>
+
+        </div>
+    </section>
+
+    <!-- Free Time Section -->
+    <!-- <section id="freetime">
+        <h2 class="section-title">Khi rảnh, tôi thường làm gì?</h2>
+        <div class="freetime-grid">
+            <div class="freetime-item">
+                <div class="image-box">🌐</div>
+                <div class="text">Học ngoại ngữ: tiếng Hàn & tiếng Anh</div>
+            </div>
+            <div class="freetime-item">
+                <div class="image-box">💻</div>
+                <div class="text">Tìm hiểu công nghệ, thử nghiệm dự án nhỏ</div>
+            </div>
+            <div class="freetime-item">
+                <div class="image-box">🎹</div>
+                <div class="text">Piano, nấu ăn</div>
+            </div>
+            <div class="freetime-item">
+                <div class="image-box">🚶</div>
+                <div class="text">Đi dạo, đi lượn — ưu tiên đồng quê, đồi núi</div>
+            </div>
+            <div class="freetime-item">
+                <div class="image-box">🏸</div>
+                <div class="text">Chơi cầu lông</div>
+            </div>
+            <div class="freetime-item">
+                <div class="image-box">📚</div>
+                <div class="text">Đọc sách, xem podcast về tâm lý & phát triển bản thân</div>
+            </div>
+        </div>
+    </section> -->
+
+        <section id="freetime">
+        <h2 class="section-title">Thời gian rảnh tớ thường ...</h2>
+        <div class="freetime-container">
+            <!-- Panel 1 -->
+            <div class="ft-panel">
+                <div class="ft-icon">🌐</div>
+                <h3>Ngoại Ngữ</h3>
+                <div class="ft-content">
+                    <p>Chủ yếu là học Tiếng Hàn & Tiếng Anh. 1 phần vì công việc, 1 phần để mở rộng tư duy qua ngôn ngữ mới.</p>
+                </div>
+            </div>
+            
+            <!-- Panel 2 -->
+            <div class="ft-panel">
+                <div class="ft-icon">💻</div>
+                <h3>Coding</h3>
+                <div class="ft-content">
+                    <p>Làm project, tìm hiểu công nghệ mới, các cách làm mới cũng khá vuii.</p>
+                </div>
+            </div>
+            
+            <!-- Panel 3 -->
+            <div class="ft-panel">
+                <div class="ft-icon">🎹</div>
+                <h3>Du lịch</h3>
+                <div class="ft-content">
+                    <p>Tớ thích đi du lịch, đặt chân đến những vùng đất mới, vùng trời mới</p>
+                </div>
+            </div>
+            
+            <!-- Panel 4 -->
+            <div class="ft-panel">
+                <div class="ft-icon">🌳</div>
+                <h3>Chill Chill ngắm cảnh</h3>
+                <div class="ft-content">
+                    <p>-1 Stress, -1 khói bụi thành phố</p>
+                </div>
+            </div>
+
+            <!-- Panel 5 -->
+            <div class="ft-panel">
+                <div class="ft-icon">📚</div>
+                <h3>Suy nghĩ về tương lai</h3>
+                <div class="ft-content">
+                    <p>Hoặc đôi khi là nằm không...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+        <section id="personality">
+        <h2 class="section-title">Một số điểm về tính cách</h2>
+        <div class="personality-wrapper">
+            <div class="per-card">
+                <span class="per-icon">🛡️</span>
+                <div class="per-title">Nội tâm</div>
+                <div class="per-desc">Trầm tính. Thích sự yên ổn, luôn né drama và những xô bồ không cần thiết.
+                Nhưng không đồng nghĩa với nhu nhược, yếu đuối nhé. 
+                Ngược lại, đầu mình luôn hoạt động, luôn quan sát, tư duy, và cũng không ngại lên tiếng lúc cần.
+                </div>
+            </div>
+            
+            <div class="per-card">
+                <span class="per-icon">🧭</span>
+                <div class="per-title">Tam quan chỉnh tề</div>
+                <div class="per-desc">Mình hiểu khá rõ mình thích gì, cần gì và đang theo đuổi điều gì. Thế giới quan đủ chín để phân biệt đúng – sai, nhân sinh quan có hướng đi rõ ràng cùng những tham vọng mình thật sự tin vào. Giá trị quan cũng đã ổn định: biết điều gì đáng giữ, điều gì nên buông. Gộp lại, chúng giúp mình sống có chính kiến, tỉnh táo và có đạo đức (dù tớ vẫn còn nhiều hoài nghi về bản thân).
+                </div>
+            </div>
+
+            <div class="per-card">
+                <span class="per-icon">🤝</span>
+                <div class="per-title">Nghiêm túc & Chân thành</div>
+                <div class="per-desc">Phần này thực sự rất khó để mô tả, nhưng ít nhất thì tớ mong muốn như vậy.</div>
+            </div>
+
+            <!-- <div class="per-card">
+                <span class="per-icon">⚖️</span>
+                <div class="per-title">Nhất quán</div>
+                <div class="per-desc">Thẳng thắn, rõ ràng, không vòng vo. Đã hứa là làm, sống có trách nhiệm với lời nói.</div>
+            </div>
+
+            <div class="per-card">
+                <span class="per-icon">⚖️</span>
+                <div class="per-title">Nhất quán</div>
+                <div class="per-desc">Thẳng thắn, rõ ràng, không vòng vo. Đã hứa là làm, sống có trách nhiệm với lời nói.</div>
+            </div> -->
+        </div>
+    </section>
+
+    <!-- Becoming Section -->
+    <!-- <section id="becoming">
+        <h2 class="section-title">Điều tôi đang cố gắng trở thành</h2>
+        <div class="becoming-grid">
+            <div class="becoming-image">🌱</div>
+            <div class="becoming-content">
+                <ul>
+                    <li>Một người đàn ông của gia đình, biết tự nấu những bữa ăn ngon</li>
+                    <li>Vững vàng trong sự nghiệp, dịu dàng trong cách giao tiếp</li>
+                    <li>Tự chủ tài chính – thời gian – cảm xúc</li>
+                    <li>Người biết lắng nghe, biết nói những lời đúng lúc</li>
+                    <li>Một phiên bản trưởng thành, điềm tĩnh và có trách nhiệm</li>
+                    <li>Tử tế và ổn định – từ trong tâm ra ngoài đời</li>
+                </ul>
+            </div>
+        </div>
+    </section> -->
+
+    <section id="becoming">
+    <h2 class="section-title">Phiên bản tớ đang hướng đến</h2>
+    <div class="becoming-container">
+        <!-- Card 1 -->
+        <div class="goal-card">
+            <div class="goal-icon">🍳</div>
+            <div class="goal-content">
+                <h3>Người đàn ông của gia đình</h3>
+                <p>Nấu ăn ngon, chăm sóc gia đình và tự chủ về cả tài chính - thời gian - cảm xúc</p>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="goal-card">
+            <div class="goal-icon">💼</div>
+            <div class="goal-content">
+                <h3>Sự nghiệp</h3>
+                <p>Tớ không quá đặt nặng vấn đề phải thành "ông này bà nọ", tớ biết đủ và cần đủ. Và trên hết tớ thích dành thời gian cho những người mình yêu thương. </p>
+            </div>
+        </div>
+
+        <div class="goal-card">
+            <div class="goal-icon">🏔️</div>
+            <div class="goal-content">
+                <h3>Trưởng thành hơn</h3>
+                <p>Để điềm tĩnh trước biến cố, chịu trách nhiệm cho mọi quyết định của bản thân.</p>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="goal-card">
+            <div class="goal-icon">💎</div>
+            <div class="goal-content">
+                <h3>Đóng góp cho Đất Nước</h3>
+                <p>"Lòng yêu nước ban đầu là lòng yêu những vật tầm thường nhất: yêu cái cây trồng ở trước nhà, yêu cái phố nhỏ đổ ra bờ sông, yêu vị thơm chua mát của trái lê mùa thu hay mùa cỏ thảo nguyên có hơi rượu mạnh. [...] Dòng suối đổ vào sông, sông đổ vào dải trường giang Volga, con sông Volga đi ra bể. Lòng yêu nhà, yêu làng xóm, yêu miền quê trở nên lòng yêu Tổ quốc."
+    
+                </p>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="goal-card">
+            <div class="goal-icon">👂</div>
+            <div class="goal-content">
+                <h3>Lắng nghe & Thấu hiểu</h3>
+                <p>...</p>
+            </div>
+        </div>
+
+        <!-- Card 5 -->
+
+
+        <!-- Card 6 -->
+        <div class="goal-card">
+            <div class="goal-icon">✨</div>
+            <div class="goal-content">
+                <h3>Du lịch, dạo chơi mà không cần nhìn đồng hồ</h3>
+                <p>Ye, tớ thích đi du lịch, được bôn ba tới những miền đất mới mà chẳng cần mang theo chiếc đồng hồ nào cạ</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- Moments Section -->
+    <section id="moments">
+        <h2 class="section-title">Một số khoảnh khắc</h2>
+        <div class="moments-grid">
+            <div class="moment-card">
+                <div class="image-box">
+                    <img src="bb.jpg" alt="">
+                </div>
+                <div class="text">Có bạn có bè nè</div>
+            </div>
+            <div class="moment-card">
+                <div class="image-box">
+                    <img src="bb2.jpg" alt="">
+                </div>
+                <div class="text">Vẫn là bạn bèe</div>
+            </div>
+            <div class="moment-card">
+                <div class="image-box">
+                    <img src="hl.jpg" alt="">
+                </div>
+                <div class="text">Đi chơiiii</div>
+            </div>
+            <div class="moment-card">
+                <div class="image-box">
+                    <img src="hb.jpg" alt="">
+                </div>
+                <div class="text">Ngắm thiên nhiên hùng vĩ</div>
+            </div>
+            <div class="moment-card">
+                <div class="image-box">
+                    <img src="chau.jpg" alt="">
+                </div>
+                <div class="text">Các cháuuu</div>
+            </div>
+            <div class="moment-card">
+                <div class="image-box">
+                    <img src="qua.jpg" alt="">
+                </div>
+                <div class="text">Quà mọi người tặng...</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <!-- <section id="gallery">
+        <h2 class="section-title">Gallery</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                💼
+                <span class="label">Công việc</span>
+            </div>
+            <div class="gallery-item">
+                🏡
+                <span class="label">Đời sống</span>
+            </div>
+            <div class="gallery-item">
+                ⚡
+                <span class="label">Hoạt động</span>
+            </div>
+            <div class="gallery-item">
+                📷
+                <span class="label">Kỷ niệm</span>
+            </div>
+            <div class="gallery-item">
+                ☕
+                <span class="label">Cafe</span>
+            </div>
+            <div class="gallery-item">
+                🌄
+                <span class="label">Phong cảnh</span>
+            </div>
+            <div class="gallery-item">
+                📖
+                <span class="label">Sách</span>
+            </div>
+            <div class="gallery-item">
+                🎹
+                <span class="label">Piano</span>
+            </div>
+        </div>
+    </section> -->
+
+        <section id="gallery">
+        <h2 class="section-title">Gallery</h2>
+        <div class="bento-grid">
+            <!-- Ô lớn nổi bật -->
+            <div class="bento-item span-2-col span-2-row" onclick="openModal('💼', 'Công việc & Sự nghiệp')">
+                <div class="bento-content">
+                    <div class="bento-icon">💼</div>
+                    <div class="bento-label">Công việc</div>
+                </div>
+            </div>
+
+            <!-- Các ô nhỏ -->
+            <div class="bento-item" onclick="openModal('🏡', 'Đời sống thường nhật')">
+                <div class="bento-content">
+                    <div class="bento-icon">🏡</div>
+                    <div class="bento-label">Đời sống</div>
+                </div>
+            </div>
+            <div class="bento-item" onclick="openModal('📷', 'Những kỷ niệm đẹp')">
+                <div class="bento-content">
+                    <div class="bento-icon">📷</div>
+                    <div class="bento-label">Kỷ niệm</div>
+                </div>
+            </div>
+
+            <!-- Ô ngang -->
+            <div class="bento-item span-2-col" onclick="openModal('🌄', 'Phong cảnh & Những chuyến đi')">
+                <div class="bento-content">
+                    <div class="bento-icon">🌄</div>
+                    <div class="bento-label">Phong cảnh</div>
+                </div>
+            </div>
+
+            <!-- Ô dọc -->
+            <div class="bento-item span-2-row" onclick="openModal('🎹', 'Piano & Nghệ thuật')">
+                <div class="bento-content">
+                    <div class="bento-icon">🎹</div>
+                    <div class="bento-label">Piano</div>
+                </div>
+            </div>
+
+            <div class="bento-item" onclick="openModal('☕', 'Cafe & Chill')">
+                <div class="bento-content">
+                    <div class="bento-icon">☕</div>
+                    <div class="bento-label">Cafe</div>
+                </div>
+            </div>
+            <div class="bento-item" onclick="openModal('📖', 'Sách & Tri thức')">
+                <div class="bento-content">
+                    <div class="bento-icon">📖</div>
+                    <div class="bento-label">Sách</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal Popup cho Gallery -->
+    <div class="modal" id="imageModal">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon"></div>
+            <h3 class="modal-text" id="modalText"></h3>
+        </div>
+    </div>
+    <!-- Footer Universe Signature -->
+<footer class="cosmos-footer">
+    <div class="footer-content">
+        <!-- Chữ ký Neon -->
+        <div class="neon-signature">Như Khoa</div>
+        
+        <!-- Thông điệp -->
+        <p class="footer-msg">
+            Made with all my heart, sincerity, and a touch of genuine care.
+        </p>
+
+        <!-- Copyright nhỏ -->
+        <div class="copyright">© 2025 KNK Universe. All rights reserved.</div>
+    </div>
+
+    <!-- Nút tên lửa -->
+    <div class="rocket-launcher" id="rocketBtn" title="Back to Space">
+        <div class="rocket-body">🚀</div>
+        <div class="rocket-fire">🔥</div>
+    </div>
+</footer>
+    <script>
+        // Music Player Control
+        const musicControl = document.getElementById('musicControl');
+        const bgMusic = document.getElementById('bgMusic');
+        const playIcon = document.getElementById('playIcon');
+        const pauseIcon = document.getElementById('pauseIcon');
+        let isPlaying = false;
+
+        // Auto-play with user interaction
+        document.addEventListener('click', function initAudio() {
+            if (!isPlaying) {
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'block';
+                }).catch(e => console.log('Autoplay prevented'));
+            }
+            document.removeEventListener('click', initAudio);
+        }, { once: true });
+
+        musicControl.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (isPlaying) {
+                bgMusic.pause();
+                playIcon.style.display = 'block';
+                pauseIcon.style.display = 'none';
+            } else {
+                bgMusic.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'block';
+            }
+            isPlaying = !isPlaying;
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card, .freetime-item, .moment-card, .gallery-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+                // Logic cho Modal Gallery
+        const modal = document.getElementById('imageModal');
+        const modalIcon = document.getElementById('modalIcon');
+        const modalText = document.getElementById('modalText');
+
+            /* =========================================
+       3. ACTIVE NAVIGATION ON SCROLL (PLANET LOGIC)
+       ========================================= */
+    
+    // Lấy danh sách các section và link
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.planet-link');
+
+    // ĐỔI TÊN BIẾN: observerOptions -> navObserverOptions
+    const navObserverOptions = {
+        root: null,
+        rootMargin: '-20% 0px -20% 0px', // Thu hẹp vùng nhận diện để chính xác hơn
+        threshold: 0.2 // Chỉ cần 20% section hiện ra là bắt đầu tính
+    };
+
+    // ĐỔI TÊN BIẾN: observer -> navObserver
+    const navObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // 1. Xóa class active ở tất cả link cũ
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                });
+
+                // 2. Lấy ID của section đang hiện
+                const id = entry.target.getAttribute('id');
+
+                // 3. Kích hoạt link tương ứng
+                // Kiểm tra id tồn tại để tránh lỗi null
+                if (id) {
+                    const activeLink = document.querySelector(`.planet-link[href="#${id}"]`);
+                    if (activeLink) {
+                        activeLink.classList.add('active');
+                    }
+                }
+            }
+        });
+    }, navObserverOptions); // Nhớ dùng biến đã đổi tên ở đây
+
+    // Bắt đầu theo dõi
+    sections.forEach(section => {
+        navObserver.observe(section);
+    });
+
+
+        
+        function openModal(icon, text) {
+            modalIcon.textContent = icon;
+            modalText.textContent = text;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        // Đóng modal khi click ra ngoài
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Hiệu ứng Tilt (Nghiêng) 3D cho thẻ Personality
+        const cards = document.querySelectorAll('.per-card');
+
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+
+                const rotateX = ((y - centerY) / centerY) * -10; // Đảo ngược trục Y
+                const rotateY = ((x - centerX) / centerX) * 10;
+
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.05)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+            });
+        });
+
+    function setTimeGreeting() {
+        const greetingElement = document.getElementById('greeting');
+        const hour = new Date().getHours();
+        let message = "";
+        let icon = "";
+
+        if (hour >= 5 && hour < 11) {
+            message = "Chào buổi sáng, chúc cậu một buổi sáng tràn đầy năng lượng tích cực nhée.";
+            icon = "☕";
+        } else if (hour >= 11 && hour < 14) {
+            message = "Buổi trưa vui vẻ, nhớ ăn uống đầy đủ nhé.";
+            icon = "☀️";
+        } else if (hour >= 14 && hour < 18) {
+            message = "Chào buổi chiều, cố gắng hoàn thành nốt công việc để đón hoàng hôn với tâm trạng relax nhất nhée";
+            icon = "🌤️";
+        } else if (hour >= 18 && hour < 22) {
+            message = "Chúc cậu buổi tối vui vẻ ~";
+            icon = "🌙";
+        } else {
+            message = "Khuya rồi, đừng quên nghỉ ngơi sớm, đừng làm việc quá sức nhé ~";
+            icon = "✨";
+        }
+
+        greetingElement.innerHTML = `${message} ${icon}`;
+    }
+    
+    // Chạy hàm greeting ngay khi load
+    setTimeGreeting();
+
+
+    /* =========================================
+       2. INTERACTIVE PARTICLES (Hạt kết nối)
+       ========================================= */
+    const canvas = document.getElementById('particleCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    let particlesArray;
+
+    // Cài đặt kích thước canvas
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Xử lý vị trí chuột
+    let mouse = {
+        x: null,
+        y: null,
+        radius: (canvas.height / 80) * (canvas.width / 80)
+    }
+
+    window.addEventListener('mousemove', function(event) {
+        mouse.x = event.x;
+        mouse.y = event.y;
+    });
+
+    // Class tạo hạt (Particle)
+    class Particle {
+        constructor(x, y, directionX, directionY, size, color) {
+            this.x = x;
+            this.y = y;
+            this.directionX = directionX;
+            this.directionY = directionY;
+            this.size = size;
+            this.color = color;
+        }
+        // Vẽ hạt
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+            ctx.fillStyle = 'rgba(212, 163, 115, 0.8)'; // Màu hạt (theo màu accent của bạn)
+            ctx.fill();
+        }
+        // Cập nhật vị trí hạt
+        update() {
+            // Kiểm tra va chạm với biên canvas
+            if (this.x > canvas.width || this.x < 0) {
+                this.directionX = -this.directionX;
+            }
+            if (this.y > canvas.height || this.y < 0) {
+                this.directionY = -this.directionY;
+            }
+
+            // Kiểm tra va chạm với chuột (hiệu ứng né chuột hoặc tương tác)
+            let dx = mouse.x - this.x;
+            let dy = mouse.y - this.y;
+            let distance = Math.sqrt(dx*dx + dy*dy);
+            
+            if (distance < mouse.radius + this.size) {
+                if (mouse.x < this.x && this.x < canvas.width - this.size * 10) {
+                    this.x += 10;
+                }
+                if (mouse.x > this.x && this.x > this.size * 10) {
+                    this.x -= 10;
+                }
+                if (mouse.y < this.y && this.y < canvas.height - this.size * 10) {
+                    this.y += 10;
+                }
+                if (mouse.y > this.y && this.y > this.size * 10) {
+                    this.y -= 10;
+                }
+            }
+
+            // Di chuyển hạt
+            this.x += this.directionX;
+            this.y += this.directionY;
+
+            // Vẽ lại
+            this.draw();
+        }
+    }
+
+    // Khởi tạo mảng hạt
+    function init() {
+        particlesArray = [];
+        let numberOfParticles = (canvas.height * canvas.width) / 9000; // Mật độ hạt
+        for (let i = 0; i < numberOfParticles; i++) {
+            let size = (Math.random() * 2) + 1;
+            let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+            let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+            let directionX = (Math.random() * 1) - 0.5; // Tốc độ chậm
+            let directionY = (Math.random() * 1) - 0.5;
+            let color = '#d4a373';
+
+            particlesArray.push(new Particle(x, y, directionX, directionY, size, color));
+        }
+    }
+
+    // Vẽ đường nối giữa các hạt (Hiệu ứng constellation)
+    function connect() {
+        let opacityValue = 1;
+        for (let a = 0; a < particlesArray.length; a++) {
+            for (let b = a; b < particlesArray.length; b++) {
+                let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x))
+                             + ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                
+                if (distance < (canvas.width/7) * (canvas.height/7)) {
+                    opacityValue = 1 - (distance/20000);
+                    ctx.strokeStyle = 'rgba(212, 163, 115,' + opacityValue + ')'; // Màu line
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                    ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    // Vòng lặp animation
+    function animate() {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        
+        for (let i = 0; i < particlesArray.length; i++) {
+            particlesArray[i].update();
+        }
+        connect();
+    }
+
+    // Xử lý khi resize màn hình
+    window.addEventListener('resize', function() {
+        canvas.width = innerWidth;
+        canvas.height = innerHeight;
+        mouse.radius = ((canvas.height/80) * (canvas.height/80));
+        init();
+    });
+
+    // Bắt đầu chạy
+    init();
+    animate();
+
+
+        /* =========================================
+       4. STARRY BACKGROUND GENERATOR
+       ========================================= */
+    function createStars() {
+        const container = document.getElementById('star-container');
+        const starCount = 150; // Số lượng ngôi sao (tăng giảm tùy thích)
+
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            
+            // Random vị trí (0% - 100%)
+            const x = Math.random() * 100;
+            const y = Math.random() * 100;
+            
+            // Random kích thước (nhỏ xinh từ 1px đến 3px)
+            const size = Math.random() * 2 + 1; 
+            
+            // Random thời gian nhấp nháy (2s - 6s)
+            const duration = Math.random() * 4 + 2;
+            
+            // Random độ trễ (để chúng không nhấp nháy cùng lúc)
+            const delay = Math.random() * 5;
+
+            // Gán style
+            star.style.left = `${x}%`;
+            star.style.top = `${y}%`;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            
+            // Set biến CSS để dùng trong keyframes
+            star.style.setProperty('--duration', `${duration}s`);
+            star.style.setProperty('--delay', `${delay}s`);
+
+            // Random màu: 80% trắng, 20% màu accent (vàng cam)
+            if (Math.random() > 0.8) {
+                star.style.background = 'var(--accent)';
+                star.style.boxShadow = `0 0 10px var(--accent)`;
+            }
+
+            container.appendChild(star);
+        }
+    }
+    
+    // Chạy hàm tạo sao
+    createStars();
+
+        /* =========================================
+       5. ROCKET SCROLL TO TOP
+       ========================================= */
+    const rocketBtn = document.getElementById('rocketBtn');
+
+    rocketBtn.addEventListener('click', function() {
+        // 1. Thêm class để kích hoạt animation bay
+        rocketBtn.classList.add('launching');
+
+        // 2. Cuộn trang lên đầu mượt mà
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+
+        // 3. Reset lại tên lửa sau khi bay xong (để lần sau còn bấm được)
+        setTimeout(() => {
+            rocketBtn.classList.remove('launching');
+        }, 2000); // 2 giây sau khi bấm (đủ thời gian animation chạy xong)
+    });
+
+
+    </script>
+
+<script>
+    function goKhoa(){
+    window.location.href = "aboutus.html";
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giáng Sinh Của Em 🎄 & HPBD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Nunito:wght@400;600;700&display=swap');
+
+        :root {
+            --orbit-speed: 40s;
+            --orbit-diameter-desktop: 650px;
+            --orbit-diameter-mobile: 320px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            /* Noel Background: Dark with bokeh lights */
+            background: url('https://images.unsplash.com/photo-1513297887119-d46091b24bfa?q=80&w=2500&auto=format&fit=crop') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            color: white;
+        }
+
+        /* Dark overlay for contrast */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 20, 30, 0.6);
+            z-index: 0;
+        }
+
+        /* Snow Canvas */
+        #snowCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 10;
+            overflow: hidden; /* Prevent scrollbars due to orbiting container */
+        }
+
+        /* Header */
+        .fancy-font {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 10px rgba(255, 0, 0, 0.8), 0 0 20px rgba(0, 255, 0, 0.6), 0 0 30px rgba(255, 215, 0, 0.6);
+            animation: christmasGlow 3s infinite alternate;
+        }
+
+        @keyframes christmasGlow {
+            0% { text-shadow: 0 0 10px #ff0000, 0 0 20px #00ff00; }
+            50% { text-shadow: 0 0 20px #ffd700, 0 0 30px #ff0000; }
+            100% { text-shadow: 0 0 10px #00ff00, 0 0 20px #ffd700; }
+        }
+
+        /* --- MAIN ORBIT AREA --- */
+        .main-orbit-area {
+            position: relative;
+            width: var(--orbit-diameter-desktop);
+            height: var(--orbit-diameter-desktop);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+             /* Ensure it doesn't overflow on small screens vertically */
+            min-height: var(--orbit-diameter-desktop);
+        }
+
+        /* Center Image Container (Static center) */
+        .center-image-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .center-image-border {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px dashed rgba(255, 215, 0, 0.8); /* Gold dashed */
+            box-shadow: 0 0 20px rgba(255,0,0,0.5);
+            animation: spinSlow 30s linear infinite;
+        }
+
+        .center-image-glow {
+            position: absolute;
+            width: 360px;
+            height: 360px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 0, 0, 0.2) 0%, rgba(0, 255, 0, 0.1) 50%, transparent 70%);
+            animation: pulseGlow 4s ease-in-out infinite;
+        }
+
+        .center-image {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 6px solid #fff;
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.5), 0 0 60px rgba(0, 255, 0, 0.3);
+            position: relative;
+            z-index: 21;
+        }
+
+        .santa-hat {
+            position: absolute;
+            top: -55px;
+            right: 25px;
+            width: 130px;
+            z-index: 25;
+            transform: rotate(15deg);
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+            animation: hatBounce 3s ease-in-out infinite;
+        }
+
+        /* Orbit Container (The Rotating Hub) */
+        .orbit-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            /* The container rotates */
+            animation: orbitRotate var(--orbit-speed) linear infinite;
+            pointer-events: none; /* Let clicks pass through container area */
+        }
+
+        /* Orbit Icons */
+        .icon-btn {
+            position: absolute;
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            /* Festive Gradient Border created with background clips */
+            border: 4px solid transparent;
+            background-image: linear-gradient(#1a2e1a, #1a2e1a), radial-gradient(circle at top left, #ff0000, #ffd700, #00ff00);
+            background-origin: border-box;
+            background-clip: padding-box, border-box;
+            
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            cursor: pointer;
+            pointer-events: auto;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(0,0,0,0.5);
+            z-index: 30;
+            /* Counter-rotate so the icon stays upright */
+            animation: counterRotate var(--orbit-speed) linear infinite;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Add a sparkly pseudo-element */
+        .icon-btn::before {
+            content: '';
+            position: absolute;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            border-radius: 50%;
+            z-index: -1;
+            background: repeating-conic-gradient(from 0deg, transparent 0deg, rgba(255,215,0,0.3) 10deg, transparent 20deg);
+            animation: spinSlow 10s linear infinite;
+        }
+
+        .icon-btn:hover {
+            /* Pausing animation on hover can be jerky, so we just scale */
+            transform: scale(1.15) !important; /* Override animation transform temporarily */
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+        }
+
+        .icon-btn .tooltip {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: #c41e3a; /* Christmas Red */
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            opacity: 0;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border: 2px solid #ffd700;
+            z-index: 40;
+        }
+
+        .icon-btn:hover .tooltip {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* --- MODAL & INFO CARD (BIGGER & FESTIVE) --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .info-card {
+            /* Bigger size */
+            width: 95%;
+            max-width: 900px;
+            min-height: 400px;
+
+            /* Festive Background & Texture */
+            background: #fffaf0 url('https://www.transparenttextures.com/patterns/snow.png'); /* Subtle snow pattern */
+            color: #333;
+            border-radius: 30px;
+            padding: 2.5rem;
+            position: relative;
+            transform: scale(0.7) translateY(50px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+            
+            /* Candy Cane Border */
+            border: 10px solid transparent;
+            border-image: repeating-linear-gradient(45deg, #c41e3a, #c41e3a 15px, #ffffff 15px, #ffffff 30px, #2f5233 30px, #2f5233 45px, #ffffff 45px, #ffffff 60px) 10;
+            overflow: hidden;
+        }
+
+        /* Birthday Ribbon Decoration */
+        .info-card::after {
+            content: 'Birthday Month! 🎉';
+            position: absolute;
+            top: 30px;
+            right: -55px;
+            transform: rotate(45deg);
+            background: linear-gradient(to right, #ffd700, #ffb347);
+            color: #c41e3a;
+            padding: 8px 60px;
+            font-weight: bold;
+            font-size: 1rem;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            z-index: 5;
+            border-bottom: 2px dotted #c41e3a;
+        }
+
+        .modal-overlay.active .info-card {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .modal-overlay.closing .info-card {
+            transform: scale(0.8) translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease-in;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            left: 20px; /* Moved to left so ribbon doesn't cover */
+            background: #c41e3a;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            border: 3px solid white;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg) scale(1.1);
+            background: #a01830;
+        }
+
+        /* Modal Content Layout (Side by side on desktop) */
+        #modalContent {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            height: 100%;
+            align-items: center;
+        }
+
+        .card-img {
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.2);
+            border: 4px solid #ffd700;
+        }
+
+        .card-text-content {
+            flex: 1;
+            text-align: left;
+        }
+
+        .card-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: 2.5rem;
+            color: #c41e3a;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .card-body {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #4a4a4a;
+            background: rgba(255,255,255,0.6);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 5px solid #2f5233;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes orbitRotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Counter rotation to keep icons upright */
+        @keyframes counterRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        @keyframes hatBounce {
+            0%, 100% { transform: rotate(15deg) translateY(0); }
+            50% { transform: rotate(10deg) translateY(-12px); }
+        }
+
+        /* Responsive Adjustments */
+        @media (min-width: 769px) {
+            #modalContent {
+                flex-direction: row; /* Side by side on large screens */
+                align-items: stretch;
+            }
+            .card-img {
+                height: auto; /* Fill height */
+                width: 45%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-orbit-area {
+                width: var(--orbit-diameter-mobile);
+                height: var(--orbit-diameter-mobile);
+                min-height: var(--orbit-diameter-mobile);
+                margin-top: 2rem;
+            }
+            .center-image-container {
+                width: 220px;
+                height: 220px;
+            }
+            .center-image {
+                width: 200px;
+                height: 200px;
+            }
+            .center-image-glow {
+                width: 240px;
+                height: 240px;
+            }
+            .icon-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 1.5rem;
+                border-width: 3px;
+            }
+            .santa-hat {
+                width: 80px;
+                top: -35px;
+                right: 15px;
+            }
+            .info-card {
+                padding: 1.5rem;
+            }
+            .info-card::after {
+                 /* Smaller ribbon on mobile */
+                 font-size: 0.8rem;
+                 padding: 5px 40px;
+                 top: 20px;
+                 right: -40px;
+            }
+            .card-title {
+                font-size: 2rem;
+            }
+            .close-modal {
+                left: 10px;
+                top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="snowCanvas"></canvas>
+
+<div class="wrapper min-h-screen flex flex-col items-center py-6">
+    <div class="w-full max-w-[1400px] px-6 mb-2 relative z-50">
+        <button onclick="window.history.back()" class="flex items-center gap-2 px-5 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-red-400 rounded-full transition-all text-white hover:text-red-200">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Quay lại
+        </button>
+    </div>
+
+    <header class="text-center mb-4 relative z-20 px-4">
+        <h1 class="text-5xl md:text-7xl fancy-font text-glow mb-4 text-white leading-tight">Giáng Sinh Của Em 🎄<br><span class="text-4xl md:text-5xl">& Happy Birthday!</span></h1>
+        <p class="text-xl md:text-2xl text-yellow-200 italic font-light tracking-wide">Công chúa nhỏ tháng 12 của anh ✨</p>
+    </header>
+
+    <div class="main-orbit-area relative z-20 my-auto">
+        
+        <div class="center-image-container">
+            <div class="center-image-glow"></div>
+            <div class="center-image-border"></div>
+            <img src="https://cdn-icons-png.flaticon.com/512/744/744546.png" class="santa-hat" alt="Santa Hat">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=500&h=500&fit=crop" alt="My Princess" class="center-image" id="mainImage">
+        </div>
+
+        <div class="orbit-container" id="orbitContainer">
+            </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="info-card" id="infoCard">
+        <button class="close-modal" id="closeBtn">×</button>
+        <div id="modalContent">
+            </div>
+    </div>
+</div>
+
+<script>
+    // === DATA ===
+    const princessData = [
+        { id: 1, icon: '💝', label: 'Tên Em', title: 'Tên Thật Đáng Yêu', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&fit=crop', content: '<strong>Trần Quỳnh Như</strong> - Cái tên mang theo hơi thở của mùa xuân, nhưng lại ấm áp như ngọn lửa đêm Giáng Sinh. Anh yêu cái tên này và yêu cả người sở hữu nó!' },
+        { id: 2, icon: '🎂', label: 'Sinh Nhật', title: 'Công Chúa Mùa Đông', image: 'https://images.unsplash.com/photo-1513201099705-a9746e1e201f?w=800&fit=crop', content: '<strong>22/12/2005</strong> - Một bông tuyết nhỏ Ma Kết ♑ sinh ra ngay trước thềm Giáng Sinh. Em chính là món quà sinh nhật tuyệt vời nhất mà thế giới gửi đến anh. Chúc mừng sinh nhật tình yêu của anh! 🎂🎉' },
+        { id: 3, icon: '📚', label: 'Học Tập', title: 'Cô Gái Tài Năng', image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&fit=crop', content: 'Sinh viên Ngôn ngữ Anh tại <strong>Đại học Sài Gòn</strong>. Thông minh, xinh đẹp và chăm chỉ. Noel này nhớ dành thời gian nghỉ ngơi nhé, đừng học nhiều quá nha công chúa!' },
+        { id: 4, icon: '🍵', label: 'Matcha', title: 'Matcha Love', image: 'https://images.unsplash.com/photo-1536013355509-89035cf1e680?w=800&fit=crop', content: 'Trời lạnh thế này mà có ly <strong>Matcha Latte</strong> nóng thì tuyệt vời nhỉ? Anh biết em thích matcha Nhật, anh sẽ học cách pha thật ngon để phục vụ riêng cho em nhé!' },
+        { id: 5, icon: '💊', label: 'Sức Khỏe', title: 'Chăm Sóc Bản Thân', image: 'https://images.unsplash.com/photo-1633626127525-c70b74533136?w=800&fit=crop', content: 'Dạ dày em yếu, Noel và sinh nhật đi chơi nhớ ăn uống điều độ, không được bỏ bữa đâu đấy. Anh xót lắm. Chúc em luôn khỏe mạnh để cùng anh đón nhiều mùa Giáng Sinh nữa.' },
+        { id: 6, icon: '🎵', label: 'Âm Nhạc', title: 'Giai Điệu Mùa Đông', image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&fit=crop', content: 'Bật list nhạc <strong>Chase Atlantic</strong> lên và tận hưởng không khí lạnh nào. Gu âm nhạc của em thật sự rất cuốn, có chút bí ẩn và quyến rũ giống hệt như em vậy.' },
+        { id: 7, icon: '✨', label: 'Tính Cách', title: 'Vẻ Đẹp Tâm Hồn', image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&fit=crop', content: 'Bề ngoài có vẻ lạnh lùng, cool ngầu nhưng bên trong lại cực kỳ ấm áp và tình cảm. Em là sự pha trộn hoàn hảo nhất. Đừng bao giờ thay đổi nhé!' },
+        { id: 8, icon: '❤️', label: 'Trái Tim', title: 'Điều Anh Muốn Nói', image: 'https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?w=800&fit=crop', content: 'Tháng 12 này đặc biệt vì có cả Giáng Sinh và sinh nhật em. Anh không cần quà gì cả, vì <strong>có em là đủ rồi</strong>. Anh hứa sẽ luôn quan tâm, yêu thương và bảo vệ công chúa của anh. Happy Birthday & Merry Christmas, my love!' }
+    ];
+
+    // === SETUP ICONS (ORBIT PLACEMENT & HOVER) ===
+    const orbitContainer = document.getElementById('orbitContainer');
+
+    princessData.forEach((item, index) => {
+        const btn = document.createElement('div');
+        btn.className = 'icon-btn';
+        btn.innerHTML = `
+            <span style="transform: inherit;">${item.icon}</span>
+            <div class="tooltip">${item.label}</div>
+        `;
+        
+        // Calculate position on the circle percentage-wise
+        const angle = (index / princessData.length) * 2 * Math.PI;
+        const radiusPercent = 45; // Place at 45% from center (inside the 50% container radius)
+        const x = 50 + radiusPercent * Math.cos(angle);
+        const y = 50 + radiusPercent * Math.sin(angle);
+
+        btn.style.left = `${x}%`;
+        btn.style.top = `${y}%`;
+        // Important: center the anchor point of the icon itself
+        btn.style.transform = 'translate(-50%, -50%)';
+
+        // --- Click Interaction ---
+        btn.onclick = () => openModal(item);
+
+        // --- Hover Interaction (1s Delay) ---
+        let hoverTimer;
+
+        btn.addEventListener('mouseenter', () => {
+            hoverTimer = setTimeout(() => {
+                openModal(item);
+            }, 1000); // 1000ms = 1 second delay
+        });
+
+        btn.addEventListener('mouseleave', () => {
+            // Cancel timer if mouse leaves before 1s
+            if (hoverTimer) {
+                clearTimeout(hoverTimer);
+            }
+        });
+        
+        orbitContainer.appendChild(btn);
+    });
+
+    // === MODAL LOGIC ===
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalContent = document.getElementById('modalContent');
+    const closeBtn = document.getElementById('closeBtn');
+    let isModalOpen = false;
+
+    function openModal(data) {
+        if (isModalOpen) return; // Prevent double opening
+        isModalOpen = true;
+
+        // Add extra birthday icon to title if it's the birthday item
+        const titleIcon = data.id === 2 ? '🎂' : '🎄';
+
+        modalContent.innerHTML = `
+            <img src="${data.image}" alt="${data.title}" class="card-img">
+            <div class="card-text-content">
+                <h3 class="card-title">${titleIcon} ${data.title}</h3>
+                <div class="card-body">
+                    ${data.content}
+                </div>
+            </div>
+        `;
+        
+        modalOverlay.classList.remove('closing');
+        modalOverlay.classList.add('active');
+
+        // Pause orbit animation when modal is open for better focus
+        document.querySelector('.orbit-container').style.animationPlayState = 'paused';
+         document.querySelectorAll('.icon-btn').forEach(btn => {
+            btn.style.animationPlayState = 'paused';
+        });
+    }
+
+    function closeModal() {
+        if (!isModalOpen) return;
+        modalOverlay.classList.add('closing');
+        
+        setTimeout(() => {
+            modalOverlay.classList.remove('active');
+            modalOverlay.classList.remove('closing');
+            isModalOpen = false;
+             // Resume orbit animation
+            document.querySelector('.orbit-container').style.animationPlayState = 'running';
+             document.querySelectorAll('.icon-btn').forEach(btn => {
+                btn.style.animationPlayState = 'running';
+            });
+        }, 300);
+    }
+
+    closeBtn.onclick = closeModal;
+    modalOverlay.onclick = (e) => {
+        // Only close if clicking the overlay background, not the card itself
+        if (e.target === modalOverlay) closeModal();
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+    });
+
+    // === SNOW CANVAS EFFECT (No changes here, just kept it working) ===
+    const canvas = document.getElementById('snowCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    class Snowflake {
+        constructor() {
+            this.reset();
+        }
+
+        reset() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * -height;
+            this.vy = 1 + Math.random() * 3;
+            this.vx = 0.5 - Math.random();
+            this.r = 1 + Math.random() * 4;
+            this.o = 0.5 + Math.random() * 0.5;
+            this.shine = Math.random() > 0.9;
+        }
+
+        update() {
+            this.y += this.vy;
+            this.x += this.vx;
+            this.vx += (Math.random() - 0.5) * 0.05;
+            if (this.y > height) {
+                this.reset();
+            }
+        }
+
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+            
+            if (this.shine) {
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = "white";
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.o})`;
+            } else {
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.o * 0.8})`;
+            }
+            
+            ctx.fill();
+            ctx.closePath();
+        }
+    }
+
+    for (let i = 0; i < 150; i++) {
+        particles.push(new Snowflake());
+        particles[i].y = Math.random() * height;
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        for (let p of particles) {
+            p.update();
+            p.draw();
+        }
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+</script>
+</body>
+</html>
